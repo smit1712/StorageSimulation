@@ -51,6 +51,7 @@ namespace Models {
                     bool needsCommand = ((IUpdatable)u).Update(tick);
 
                     if(needsCommand) {
+                        u.Move(u.x, u.y + 0.01, u.z); // Change position of Model
                         SendCommandToObservers(new UpdateModel3DCommand(u));
                     }
                 }
