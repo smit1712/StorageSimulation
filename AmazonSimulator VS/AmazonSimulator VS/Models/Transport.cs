@@ -5,12 +5,12 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-	public class Transport : _3DModel, IUpdatable
+	public class Transport : Model3D, IUpdatable
 {
         Stack<Rack> Rackstack = new Stack<Rack>();
         public Transport(double x, double y, double z, double rotationX, double rotationY, double rotationZ) : base(x, y, z, rotationX, rotationY, rotationZ)
         {
-            this.type = "Transport";
+            this.type = "transport";
             this.guid = Guid.NewGuid();
         }
         public virtual bool Update(int tick)
