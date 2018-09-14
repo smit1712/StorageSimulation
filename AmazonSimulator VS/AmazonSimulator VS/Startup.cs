@@ -48,6 +48,7 @@ namespace AmazonSimulator_VS
             // Add new mappings
             provider.Mappings[".mtl"] = "text/plain";
             provider.Mappings[".obj"] = "text/plain";
+            provider.Mappings[".fbx"] = "text/plain";
 
             app.UseStaticFiles(new StaticFileOptions
             {

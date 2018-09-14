@@ -11,10 +11,11 @@ namespace Models {
         
         public World() {
             Robot robot = CreateRobot(10, 0.15, 10);
-            //robot.Move(0, 0, 0);
+            Rack rack = CreateRack(0, 0.15, 0);
+            Person person = CreatePerson(0, 0.15, 0);
 
-            Rack rack = CreateRack(1, 3, 1);
-            //Transport transport = CreateTransport(2, 2, 2);
+            //robot.Move(0, 0, 0);
+            //Transport transport = CreateTransport(0, 0, 0);
         }
 
         private Robot CreateRobot(double x, double y, double z) {
@@ -22,12 +23,14 @@ namespace Models {
             worldObjects.Add(r);
             return r;
         }
+
         private Rack CreateRack(double x, double y, double z)
         {
             Rack r = new Rack(x, y, z, 0, 0, 0);
             worldObjects.Add(r);
             return r;
         }
+
         private Transport CreateTransport(double x, double y, double z)
         {
             Transport t = new Transport(x, y, z, 0, 0, 0);
@@ -35,26 +38,11 @@ namespace Models {
             return t;
         }
 
-        public IDisposable Subscribe(IObserver<Command> observer)
+        private Person CreatePerson(double x, double y, double z)
         {
-            if (!observers.Contains(observer)) {
-                observers.Add(observer);
-
-                SendCreationCommandsToObserver(observer);
-            }
-            return new Unsubscriber<Command>(observers, observer);
-        }
-
-        private void SendCommandToObservers(Command c) {
-            for(int i = 0; i < this.observers.Count; i++) {
-                this.observers[i].OnNext(c);
-            }
-        }
-
-        private void SendCreationCommandsToObserver(IObserver<Command> obs) {
-            foreach(Model3D m3d in worldObjects) {
-                obs.OnNext(new UpdateModel3DCommand(m3d));
-            }
+            Person p = new Person(x, y, z, 0, 0, 0);
+            worldObjects.Add(p);
+            return p;
         }
 
         public bool Update(int tick)
@@ -70,6 +58,7 @@ namespace Models {
                         double y;
                         if (m3d.y >= 10) { y = 0.15; }
                         else { y = m3d.y + 0.10; }
+
                         m3d.Move(m3d.x, y, m3d.z);                              // Change position of Model
                         SendCommandToObservers(new UpdateModel3DCommand(m3d));  // Send Model through socket
                     }
@@ -77,6 +66,33 @@ namespace Models {
             }
 
             return true;
+        }
+
+        public IDisposable Subscribe(IObserver<Command> observer)
+        {
+            if (!observers.Contains(observer))
+            {
+                observers.Add(observer);
+
+                SendCreationCommandsToObserver(observer);
+            }
+            return new Unsubscriber<Command>(observers, observer);
+        }
+
+        private void SendCommandToObservers(Command c)
+        {
+            for (int i = 0; i < this.observers.Count; i++)
+            {
+                this.observers[i].OnNext(c);
+            }
+        }
+
+        private void SendCreationCommandsToObserver(IObserver<Command> obs)
+        {
+            foreach (Model3D m3d in worldObjects)
+            {
+                obs.OnNext(new UpdateModel3DCommand(m3d));
+            }
         }
     }
 

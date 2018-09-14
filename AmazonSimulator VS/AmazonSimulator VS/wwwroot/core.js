@@ -55,6 +55,7 @@ window.onload = function () {
     Socket.onmessage = function (event) {
         var command = parseCommand(event.data);
         var loader = new THREE.ObjectLoader();
+        var fbxLoader = new THREE.FBXLoader();
 
         if (command.command === "update") {
             if (Object.keys(worldObjects).indexOf(command.parameters.guid) < 0) {
@@ -75,11 +76,11 @@ window.onload = function () {
                     var robot = new THREE.Mesh(geometry, material);
                     robot.position.y = 0.15;
                     // Add object to group
-                    group.add(robot);    
+                    group.add(robot);
                 } else if (command.parameters.type === "rack") {
                     loader.load(
                         // resource URL
-	                    "models3d/drone.json",
+                        "models3d/drone.json",
 
                         // called when resource is loaded
                         function (obj) {
@@ -94,6 +95,25 @@ window.onload = function () {
                         // called when loading has errors
                         function (error) {
                             console.log('An error happened');
+                        }
+                    );
+                } else if (command.parameters.type === "person") {
+                    fbxLoader.load(
+                        "models3d/man.fbx",
+
+                        function (obj) {
+                            group.add(obj);
+                        },
+
+                        // called when loading is in progresses
+                        function (xhr) {
+                            //console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                        },
+
+                        // called when loading has errors
+                        function (error) {
+                            console.log('An error happened');
+                            console.log(error);
                         }
                     );
                 }
