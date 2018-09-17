@@ -15,7 +15,7 @@ namespace Models {
             //Person person = CreatePerson(0, 0.15, 0);
 
             //robot.Move(0, 0, 0);
-            //Transport transport = CreateTransport(0, 0, 0);
+            Transport transport = CreateTransport(-5, 0.5, -10);
         }
 
         private Robot CreateRobot(double x, double y, double z) {
@@ -55,11 +55,16 @@ namespace Models {
 
                     if (needsCommand)
                     {
-                        double y;
-                        if (m3d.y >= 10) { y = 0.15; }
-                        else { y = m3d.y + 0.10; }
 
-                        m3d.Move(m3d.x, y, m3d.z);                              // Change position of Model
+                        //switch (m3d.type)
+                        //{
+                        //    case "transport":
+                        //        double z;
+                        //        if (m3d.z >= 30) { z = 0.15; }
+                        //        else { z = m3d.z + 0.10; }
+                        //        m3d.Move(m3d.x, m3d.y, z);     
+                        //        break;
+                        //}
                         SendCommandToObservers(new UpdateModel3DCommand(m3d));  // Send Model through socket
                     }
                 }

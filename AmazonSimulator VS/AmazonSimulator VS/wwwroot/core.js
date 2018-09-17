@@ -78,8 +78,8 @@ window.onload = function () {
                     // Add object to group
                     group.add(robot);
                 } else if (command.parameters.type === "rack") {
-                    loadOBJModel("models/rack/", "rack.obj", "models/rack/", "rack.mtl", (obj) => {
-                        //obj.scale.set(0.5, 0.5, 0.5);
+                    loadOBJModel("models/rack/", "rack.obj", "models/rack/", "rack.mtl", (obj) => {       
+                        obj.scale.set(0.03, 0.03, 0.03);
                         group.add(obj);
                     });
                 } else if (command.parameters.type === "person") {
@@ -101,6 +101,12 @@ window.onload = function () {
                     //        console.log(error);
                     //    }
                     //);
+                } else if (command.parameters.type === "transport") {
+                    loadOBJModel("models/transport/", "CUPIC_TRUCK.obj", "models/transport/", "CUPIC_TRUCK.mtl", (obj) => {
+                        obj.scale.set(0.03, 0.03, 0.03);
+
+                        group.add(obj);
+                    });
                 }
 
                 // Add group to Scene
@@ -123,7 +129,8 @@ window.onload = function () {
         function loadOBJModel(modelPath, modelName, texturePath, textureName, onload) {
             new THREE.MTLLoader()
                 .setPath(texturePath)
-                .load(textureName, function (materials) {
+                .load(textureName, function (materials) {     
+                    materials.color
                     materials.preload();
 
                     new THREE.OBJLoader()
