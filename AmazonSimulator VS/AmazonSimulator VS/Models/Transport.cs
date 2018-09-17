@@ -27,15 +27,20 @@ namespace Models
 
         public void Delivery()
         {
-           
+            if (z > 10.5 && z < 10.70)
+            {
+                System.Threading.Thread.Sleep(5000);
+                Move(x, y, 11.1);
+            }
             if (z > 30)
             {
-                Move(0, 0, -10);
+                tempz = -10;
+                Move(x, y, -10);
             }
             else
             {
                 tempz = tempz + 0.15;
-                Move(0, 0, tempz);
+                Move(x, y, tempz);
             }
         }
         public void GetRack(Rack Getrack)

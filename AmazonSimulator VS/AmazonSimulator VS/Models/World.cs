@@ -2,20 +2,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Controllers;
-
+using System.Threading;
 namespace Models {
     public class World : IObservable<Command>, IUpdatable
     {
         private List<Model3D> worldObjects = new List<Model3D>();
         private List<IObserver<Command>> observers = new List<IObserver<Command>>();
-        
-        public World() {
-            Robot robot = CreateRobot(10, 0.15, 10);
-            Rack rack = CreateRack(0, 0.15, 0);
-            //Person person = CreatePerson(0, 0.15, 0);
 
-            //robot.Move(0, 0, 0);
-            Transport transport = CreateTransport(-5, 0.5, -10);
+        public World() {
+            Thread RobotThread = new Thread(() => CreateRobot(10, 0.15, 10));
+            RobotThread.Start();
+            
+            Thread RackThread = new Thread(() => CreateRack(0, 0.15, 0));
+            RackThread.Start();
+
+            Thread TransportThread = new Thread(() => CreateTransport(-1.0, 0.4, -10));
+            TransportThread.Start();
         }
 
         private Robot CreateRobot(double x, double y, double z) {
@@ -56,15 +58,17 @@ namespace Models {
                     if (needsCommand)
                     {
 
-                        //switch (m3d.type)
-                        //{
-                        //    case "transport":
-                        //        double z;
-                        //        if (m3d.z >= 30) { z = 0.15; }
-                        //        else { z = m3d.z + 0.10; }
-                        //        m3d.Move(m3d.x, m3d.y, z);     
-                        //        break;
-                        //}
+                        switch (m3d.type)
+                        {
+                            case "transport":                                
+                                break;
+
+                            case "robot":
+                                break;
+
+                            case "rack":
+                                break;
+                        }
                         SendCommandToObservers(new UpdateModel3DCommand(m3d));  // Send Model through socket
                     }
                 }
