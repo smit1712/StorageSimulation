@@ -78,44 +78,29 @@ window.onload = function () {
                     // Add object to group
                     group.add(robot);
                 } else if (command.parameters.type === "rack") {
-                    loader.load(
-                        // resource URL
-                        "models3d/drone.json",
-
-                        // called when resource is loaded
-                        function (obj) {
-                            group.add(obj); // Add obj to group
-                        },
-
-                        // called when loading is in progresses
-                        function (xhr) {
-                            //console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-                        },
-
-                        // called when loading has errors
-                        function (error) {
-                            console.log('An error happened');
-                        }
-                    );
+                    loadOBJModel("models/rack/", "rack.obj", "models/rack/", "rack.mtl", (obj) => {
+                        //obj.scale.set(0.5, 0.5, 0.5);
+                        group.add(obj);
+                    });
                 } else if (command.parameters.type === "person") {
-                    fbxLoader.load(
-                        "models3d/man.fbx",
+                    //fbxLoader.load(
+                    //    "models3d/man.fbx",
 
-                        function (obj) {
-                            group.add(obj);
-                        },
+                    //    function (obj) {
+                    //        group.add(obj);
+                    //    },
 
-                        // called when loading is in progresses
-                        function (xhr) {
-                            //console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-                        },
+                    //    // called when loading is in progresses
+                    //    function (xhr) {
+                    //        //console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+                    //    },
 
-                        // called when loading has errors
-                        function (error) {
-                            console.log('An error happened');
-                            console.log(error);
-                        }
-                    );
+                    //    // called when loading has errors
+                    //    function (error) {
+                    //        console.log('An error happened');
+                    //        console.log(error);
+                    //    }
+                    //);
                 }
 
                 // Add group to Scene
@@ -134,8 +119,55 @@ window.onload = function () {
             object.rotation.y = command.parameters.rotationY;
             object.rotation.z = command.parameters.rotationZ;
         }
+
+        function loadOBJModel(modelPath, modelName, texturePath, textureName, onload) {
+            new THREE.MTLLoader()
+                .setPath(texturePath)
+                .load(textureName, function (materials) {
+                    materials.preload();
+
+                    new THREE.OBJLoader()
+                        .setPath(modelPath)
+                        .setMaterials(materials)
+                        .load(modelName, function (object) {
+                            onload(object);
+                        },
+
+                        // Progress (%) handling
+                        function () { },
+
+                        // Error handling
+                        function (e) {
+                            console.log("Error loading model");
+                            console.log(e);
+                        });
+                });
+        }
     }
 
     init();
     animate();
 }
+
+
+// Spare code
+
+//loader.load(
+//     resource URL
+//    "models3d/drone.json",
+
+//     called when resource is loaded
+//    function (obj) {
+//        group.add(obj); // Add obj to group
+//    },
+
+//     called when loading is in progresses
+//    function (xhr) {
+//        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+//    },
+
+//     called when loading has errors
+//    function (error) {
+//        console.log('An error happened');
+//    }
+//);
