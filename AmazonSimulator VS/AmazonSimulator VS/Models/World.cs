@@ -12,7 +12,7 @@ namespace Models {
         public World() {
             Robot robot = CreateRobot(10, 0.15, 10);
             Rack rack = CreateRack(0, 0.15, 0);
-            Person person = CreatePerson(0, 0.15, 0);
+            //Person person = CreatePerson(0, 0.15, 0);
 
             //robot.Move(0, 0, 0);
             //Transport transport = CreateTransport(0, 0, 0);
