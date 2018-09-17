@@ -84,6 +84,10 @@
                             robot.position.y = 0.15;
 
                             var group = new THREE.Group();
+
+                            var robot2 = new THREE.Mesh(geometry, material);
+                            group.add(robot2);
+
                             group.add(robot);
 
                             scene.add(group);
