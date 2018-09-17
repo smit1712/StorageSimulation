@@ -39,7 +39,7 @@ namespace Views {
             try {
                 await socket.SendAsync(new ArraySegment<byte>(buffer, 0, message.Length), WebSocketMessageType.Text, true, CancellationToken.None);
             } catch(Exception e) {
-                Console.WriteLine("Error while sending information to client, probably a Socket disconnect");
+                Console.WriteLine("Error while sending information to client, probably a Socket disconnect: " + e);
             }
         }
 

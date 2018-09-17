@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-	public class Rack : _3DModel,IUpdatable
+	public class Rack : Model3D, IUpdatable
 {
         public Rack(double x, double y, double z, double rotationX, double rotationY, double rotationZ) : base(x, y, z, rotationX, rotationY, rotationZ)
         {
-            this.type = "Rack";
+            this.type = "rack";
             this.guid = Guid.NewGuid();
 
         }
