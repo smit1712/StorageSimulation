@@ -11,7 +11,7 @@ window.onload = function () {
     var worldObjects = {};
 
     function init() {
-        camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1000);
+        camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1500);
         cameraControls = new THREE.OrbitControls(camera);
         camera.position.z = 15;
         camera.position.y = 5;
@@ -34,7 +34,13 @@ window.onload = function () {
         plane.position.z = 15;
         scene.add(plane);
 
+        var SkyboxGeo = new THREE.SphereGeometry(1000, 32, 32);
+        var SkyboxMat = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("models/skybox/skybox.jpg"), side: THREE.DoubleSide });
+        var skybox = new THREE.Mesh(SkyboxGeo, SkyboxMat);
+        scene.add(skybox);
+
         var light = new THREE.AmbientLight(0x404040);
+
         light.intensity = 4;
         scene.add(light);
     }
