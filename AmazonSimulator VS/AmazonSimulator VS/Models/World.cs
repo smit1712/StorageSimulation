@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Controllers;
 using System.Threading;
+using AmazonSimulator;
+
 namespace Models {
     public class World : IObservable<Command>, IUpdatable
     {
@@ -18,6 +20,46 @@ namespace Models {
 
             Thread TransportThread = new Thread(() => CreateTransport(-1.0, 0.4, -10));
             TransportThread.Start();
+
+            List<Node> NodeList = new List<Node>();
+
+            NodeList = FillNodeList();
+
+            Dijkstra dijkstra = new Dijkstra(NodeList);
+            List<Node> route = dijkstra.GetRoute(NodeList[0], NodeList[3]);
+
+
+        }
+        private List<Node> FillNodeList()
+        {
+            List<Node> Nlist = new List<Node>();
+            Node A = new Node(0, 0, 0, "A");
+            Node B = new Node(0, 0, 10.5, "B");
+            Node C = new Node(0, 0, 30, "C");
+            Node D = new Node(30, 0, 0, "D");
+            Node E = new Node(30, 0, 30, "E");
+
+            A.AddAdjacentNode1(E);
+            A.AddAdjacentNode2(B);
+
+            B.AddAdjacentNode1(A);
+            B.AddAdjacentNode2(C);
+
+            C.AddAdjacentNode1(B);
+            C.AddAdjacentNode2(D);
+
+            D.AddAdjacentNode1(C);
+            D.AddAdjacentNode2(E);
+
+            E.AddAdjacentNode1(D);
+            E.AddAdjacentNode2(A);
+
+            Nlist.Add(A);
+            Nlist.Add(B);
+            Nlist.Add(C);
+            Nlist.Add(D);
+            Nlist.Add(E);
+            return Nlist;
         }
 
         private Robot CreateRobot(double x, double y, double z) {
@@ -60,12 +102,11 @@ namespace Models {
 
                         switch (m3d.type)
                         {
-                            case "transport":                                
+                            case "transport":
                                 break;
 
-                            case "robot":
+                            case "robot":                               
                                 break;
-
                             case "rack":
                                 break;
                         }
