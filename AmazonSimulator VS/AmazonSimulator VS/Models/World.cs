@@ -9,6 +9,11 @@ namespace Models {
     public class World : IObservable<Command>, IUpdatable
     {
         private List<Model3D> worldObjects = new List<Model3D>();
+        private List<Robot> robots = new List<Robot>();
+        private List<Rack> newRacks = new List<Rack>();
+        private List<Rack> storedRacks = new List<Rack>();
+        private List<Rack> emptyRacks = new List<Rack>();
+
         private List<IObserver<Command>> observers = new List<IObserver<Command>>();
 
         public World() {
@@ -29,6 +34,14 @@ namespace Models {
             List<Node> route = dijkstra.GetRoute(NodeList[0], NodeList[3]);
 
 
+            CreateRobot(1, 0.15, 5);
+            CreateRack(10, 0.15, 5);
+            CreateRack(10, 0.15, 10);
+            CreateRack(10, 0.15, 15);
+            CreateRack(10, 0.15, 20);
+            //CreateRack(1, 0.15, 5);
+
+            //CreateTransport(-1.0, 0.4, -10);
         }
         private List<Node> FillNodeList()
         {
@@ -64,6 +77,7 @@ namespace Models {
 
         private Robot CreateRobot(double x, double y, double z) {
             Robot r = new Robot(x, y, z, 0, 0, 0);
+            robots.Add(r);
             worldObjects.Add(r);
             return r;
         }
@@ -71,6 +85,7 @@ namespace Models {
         private Rack CreateRack(double x, double y, double z)
         {
             Rack r = new Rack(x, y, z, 0, 0, 0);
+            storedRacks.Add(r);
             worldObjects.Add(r);
             return r;
         }
@@ -80,13 +95,6 @@ namespace Models {
             Transport t = new Transport(x, y, z, 0, 0, 0);
             worldObjects.Add(t);
             return t;
-        }
-
-        private Person CreatePerson(double x, double y, double z)
-        {
-            Person p = new Person(x, y, z, 0, 0, 0);
-            worldObjects.Add(p);
-            return p;
         }
 
         public bool Update(int tick)
@@ -99,13 +107,15 @@ namespace Models {
 
                     if (needsCommand)
                     {
-
                         switch (m3d.type)
                         {
                             case "transport":
+                                MoveTransport(m3d);
                                 break;
 
-                            case "robot":                               
+                            case "robot":
+                                Robot r = robots.Find(x => x.guid == m3d.guid);
+                                MoveRobot(r);
                                 break;
                             case "rack":
                                 break;
@@ -116,6 +126,50 @@ namespace Models {
             }
 
             return true;
+        }
+
+        double temporaryZ = 0;
+        public void MoveTransport(Model3D transport)
+        {
+            if (transport.z > 10.5 && transport.z < 10.70)
+            {
+                //Thread.Sleep(5000);
+                transport.Move(transport.x, transport.y, transport.z);
+            }
+            if (transport.z > 30)
+            {
+                temporaryZ = 0;
+                transport.Move(transport.x, transport.x, temporaryZ);
+            }
+            else
+            {
+                temporaryZ = temporaryZ + 0.15;
+                transport.Move(transport.x, transport.y, temporaryZ);
+            }
+        }
+
+        public void MoveRobot(Robot robot)
+        {
+            robot.SearchRack();
+
+            if (robot.reachedDestiny)
+            {
+                if (!robot.hasRack)
+                {
+                    if (storedRacks.Count > 0)
+                    {
+                        Random rnd = new Random();
+                        int index = rnd.Next(storedRacks.Count);
+                        Rack rack = storedRacks[index];
+                        robot.PickupRack(rack);
+                        storedRacks.RemoveAt(index);
+                    }
+                } else
+                {
+                    emptyRacks.Add(robot.currentRack);
+                    robot.DropRack();
+                }
+            }
         }
 
         public IDisposable Subscribe(IObserver<Command> observer)

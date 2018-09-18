@@ -13,15 +13,5 @@ namespace Models
             this.guid = Guid.NewGuid();
 
         }
-
-        public virtual bool Update(int tick)
-        {
-            if (needsUpdate)
-            {
-                needsUpdate = false;
-                return true;
-            }
-            return false;
-        }
     }
 }
