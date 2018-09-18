@@ -36,6 +36,16 @@ namespace Models
             this._rZ = rotationZ;
         }
 
+        public virtual bool Update(int tick)
+        {
+            if (needsUpdate)
+            {
+                needsUpdate = false;
+                return true;
+            }
+            return false;
+        }
+
         public virtual void Move(double x, double y, double z)
         {
             this._x = x;
@@ -52,7 +62,5 @@ namespace Models
             this._rZ = rotationZ;
             needsUpdate = true;
         }
-
-        
     }
 }

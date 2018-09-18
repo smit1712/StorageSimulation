@@ -13,9 +13,9 @@ window.onload = function () {
     function init() {
         camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1500);
         cameraControls = new THREE.OrbitControls(camera);
-        camera.position.z = 15;
-        camera.position.y = 5;
-        camera.position.x = 15;
+        camera.position.z = 0;
+        camera.position.y = 20;
+        camera.position.x = 50;
         cameraControls.update();
         scene = new THREE.Scene();
 
@@ -34,10 +34,13 @@ window.onload = function () {
         plane.position.z = 15;
         scene.add(plane);
 
-        var SkyboxGeo = new THREE.SphereGeometry(1000, 32, 32);
-        var SkyboxMat = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("models/skybox/skybox.jpg"), side: THREE.DoubleSide });
-        var skybox = new THREE.Mesh(SkyboxGeo, SkyboxMat);
-        scene.add(skybox);
+        var debug = true;
+        if (!debug) {
+            var SkyboxGeo = new THREE.SphereGeometry(1000, 32, 32);
+            var SkyboxMat = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("models/skybox/skybox.jpg"), side: THREE.DoubleSide });
+            var skybox = new THREE.Mesh(SkyboxGeo, SkyboxMat);
+            scene.add(skybox);
+        }
 
         var light = new THREE.AmbientLight(0x404040);
 
@@ -60,11 +63,12 @@ window.onload = function () {
     Socket = new WebSocket("ws://" + window.location.hostname + ":" + window.location.port + "/connect_client");
     Socket.onmessage = function (event) {
         var command = parseCommand(event.data);
-        var loader = new THREE.ObjectLoader();
-        var fbxLoader = new THREE.FBXLoader();
 
         if (command.command === "update") {
             if (Object.keys(worldObjects).indexOf(command.parameters.guid) < 0) {
+                // var loader = new THREE.ObjectLoader();
+                // var fbxLoader = new THREE.FBXLoader();
+
                 // Init Three Group
                 var group = new THREE.Group();
 
@@ -85,32 +89,12 @@ window.onload = function () {
                     group.add(robot);
                 } else if (command.parameters.type === "rack") {
                     loadOBJModel("models/rack/", "rack.obj", "models/rack/", "rack.mtl", (obj) => {       
-                        obj.scale.set(0.03, 0.03, 0.03);
+                        obj.scale.set(2, 2, 2);
                         group.add(obj);
                     });
-                } else if (command.parameters.type === "person") {
-                    //fbxLoader.load(
-                    //    "models3d/man.fbx",
-
-                    //    function (obj) {
-                    //        group.add(obj);
-                    //    },
-
-                    //    // called when loading is in progresses
-                    //    function (xhr) {
-                    //        //console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-                    //    },
-
-                    //    // called when loading has errors
-                    //    function (error) {
-                    //        console.log('An error happened');
-                    //        console.log(error);
-                    //    }
-                    //);
                 } else if (command.parameters.type === "transport") {
-                    loadOBJModel("models/transport/", "CUPIC_TRUCK.obj", "models/transport/", "CUPIC_TRUCK.mtl", (obj) => {
+                    loadOBJModel("models/transport/", "truck.obj", "models/transport/", "truck.mtl", (obj) => {
                         obj.scale.set(0.03, 0.03, 0.03);
-
                         group.add(obj);
                     });
                 }
@@ -146,10 +130,10 @@ window.onload = function () {
                             onload(object);
                         },
 
-                        // Progress (%) handling
+                        // Progress %
                         function () { },
 
-                        // Error handling
+                        // Error
                         function (e) {
                             console.log("Error loading model");
                             console.log(e);
@@ -182,5 +166,24 @@ window.onload = function () {
 //     called when loading has errors
 //    function (error) {
 //        console.log('An error happened');
+//    }
+//);
+
+//fbxLoader.load(
+//    "models3d/man.fbx",
+
+//    function (obj) {
+//        group.add(obj);
+//    },
+
+//    // called when loading is in progresses
+//    function (xhr) {
+//        //console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+//    },
+
+//    // called when loading has errors
+//    function (error) {
+//        console.log('An error happened');
+//        console.log(error);
 //    }
 //);
