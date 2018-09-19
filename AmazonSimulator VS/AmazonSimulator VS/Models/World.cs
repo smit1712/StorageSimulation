@@ -136,6 +136,7 @@ namespace Models {
                 {
                     countTick = 0;
                 }
+                transport.Move(transport.x, transport.y, transport.z);
                 return;
             }
 
@@ -143,18 +144,18 @@ namespace Models {
             {
                 countTick = 1;
                 countedTick = true;
-                transport.Move(transport.x, transport.x, transport.z);
+                transport.Move(transport.x, transport.y, transport.z);
             }
             else if (transport.z > 30)
             {
                 temporaryZ = 0;
-                transport.Move(transport.x, transport.x, temporaryZ);
+                transport.Move(transport.x, transport.y, temporaryZ);
                 countedTick = false;
                 countTick = 0;
             }
             else
             {
-                temporaryZ += 0.15;
+                temporaryZ = transport.z + 0.15;
                 transport.Move(transport.x, transport.y, temporaryZ);
             }
         }
