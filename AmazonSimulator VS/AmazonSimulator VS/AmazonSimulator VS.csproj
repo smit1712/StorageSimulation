@@ -18,8 +18,4 @@
     </Reference>
   </ItemGroup>
 
-  <ItemGroup>
-    <None Include="wwwroot\models3d\man.fbx" />
-  </ItemGroup>
-
 </Project>

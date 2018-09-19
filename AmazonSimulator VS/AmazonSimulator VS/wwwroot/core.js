@@ -89,7 +89,7 @@ window.onload = function () {
                     group.add(robot);
                 } else if (command.parameters.type === "rack") {
                     loadOBJModel("models/rack/", "rack.obj", "models/rack/", "rack.mtl", (obj) => {       
-                        obj.scale.set(2, 2, 2);
+                        obj.scale.set(0.03, 0.03, 0.03);
                         group.add(obj);
                     });
                 } else if (command.parameters.type === "transport") {

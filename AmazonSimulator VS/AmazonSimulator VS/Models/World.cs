@@ -25,10 +25,10 @@ namespace Models {
             CreateRobot(10, 0.15, 10);
             CreateRobot(1, 0.15, 5);
 
-            CreateRack(10, 0.15, 5);
+            CreateRack(5, 0.15, 5);
             CreateRack(10, 0.15, 10);
-            CreateRack(10, 0.15, 15);
-            CreateRack(10, 0.15, 20);
+            CreateRack(15, 0.15, 15);
+            CreateRack(20, 0.15, 20);
 
             List<Node> NodeList = new List<Node>();
 

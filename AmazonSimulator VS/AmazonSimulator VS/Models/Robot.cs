@@ -23,9 +23,9 @@ namespace Models {
             double destX;
             
             if (forward) {
-                destX = x + 1;
+                destX = x + .15;
             } else {
-                destX = x - 1;
+                destX = x - .15;
             }
 
             Move(destX, y, z);
