@@ -8,41 +8,36 @@ using AmazonSimulator;
 namespace Models {
     public class World : IObservable<Command>, IUpdatable
     {
+        // All models
         private List<Model3D> worldObjects = new List<Model3D>();
+        // Robots
         private List<Robot> robots = new List<Robot>();
+        // Racks
         private List<Rack> newRacks = new List<Rack>();
         private List<Rack> storedRacks = new List<Rack>();
         private List<Rack> emptyRacks = new List<Rack>();
-
+        // Clients
         private List<IObserver<Command>> observers = new List<IObserver<Command>>();
 
         public World() {
-            Thread RobotThread = new Thread(() => CreateRobot(10, 0.15, 10));
-            RobotThread.Start();
-            
-            Thread RackThread = new Thread(() => CreateRack(0, 0.15, 0));
-            RackThread.Start();
+            CreateTransport(-1.0, 0.4, -10);
 
-            Thread TransportThread = new Thread(() => CreateTransport(-1.0, 0.4, -10));
-            TransportThread.Start();
+            CreateRobot(10, 0.15, 10);
+            CreateRobot(1, 0.15, 5);
+
+            CreateRack(10, 0.15, 5);
+            CreateRack(10, 0.15, 10);
+            CreateRack(10, 0.15, 15);
+            CreateRack(10, 0.15, 20);
 
             List<Node> NodeList = new List<Node>();
 
             NodeList = FillNodeList();
 
             Dijkstra dijkstra = new Dijkstra(NodeList);
-            List<Node> route = dijkstra.GetRoute(NodeList[0], NodeList[3]);
-
-
-            CreateRobot(1, 0.15, 5);
-            CreateRack(10, 0.15, 5);
-            CreateRack(10, 0.15, 10);
-            CreateRack(10, 0.15, 15);
-            CreateRack(10, 0.15, 20);
-            //CreateRack(1, 0.15, 5);
-
-            //CreateTransport(-1.0, 0.4, -10);
+            List<Node> route = dijkstra.GetRoute(NodeList[0], NodeList[3]);            
         }
+
         private List<Node> FillNodeList()
         {
             List<Node> Nlist = new List<Node>();
@@ -129,21 +124,37 @@ namespace Models {
         }
 
         double temporaryZ = 0;
+        bool countedTick = false;
+        int countTick = 0;
         public void MoveTransport(Model3D transport)
         {
-            if (transport.z > 10.5 && transport.z < 10.70)
+            if (countTick > 0)
             {
-                //Thread.Sleep(5000);
-                transport.Move(transport.x, transport.y, transport.z);
+                countTick++;
+                Console.WriteLine(countTick);
+                if (countTick > 30)
+                {
+                    countTick = 0;
+                }
+                return;
             }
-            if (transport.z > 30)
+
+            if (transport.z >= 10 && !countedTick)
+            {
+                countTick = 1;
+                countedTick = true;
+                transport.Move(transport.x, transport.x, transport.z);
+            }
+            else if (transport.z > 30)
             {
                 temporaryZ = 0;
                 transport.Move(transport.x, transport.x, temporaryZ);
+                countedTick = false;
+                countTick = 0;
             }
             else
             {
-                temporaryZ = temporaryZ + 0.15;
+                temporaryZ += 0.15;
                 transport.Move(transport.x, transport.y, temporaryZ);
             }
         }

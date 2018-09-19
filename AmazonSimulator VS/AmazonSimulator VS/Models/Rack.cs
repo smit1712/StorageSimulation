@@ -11,7 +11,6 @@ namespace Models
         {
             this.type = "rack";
             this.guid = Guid.NewGuid();
-
         }
     }
 }
