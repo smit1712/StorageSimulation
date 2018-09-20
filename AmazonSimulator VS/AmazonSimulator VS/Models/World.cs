@@ -31,11 +31,10 @@ namespace Models {
             CreateRack(20, 0.15, 20);
 
             List<Node> NodeList = new List<Node>();
-
             NodeList = FillNodeList();
-
             Dijkstra dijkstra = new Dijkstra(NodeList);
-            List<Node> route = dijkstra.GetRoute(NodeList[0], NodeList[3]);            
+            List<Node> route = dijkstra.GetBestRoute(NodeList[2], NodeList[0],NodeList[2]);
+            route.Reverse();
         }
 
         private List<Node> FillNodeList()

@@ -15,10 +15,6 @@ namespace AmazonSimulator
         Node AdjacentNode2;
 
         public string NodeName;
-
-        //  public Node LastNode {get{ return LastNode; } set { LastNode = value; } }
-
-
         public Node(double x, double y, double z,string NName)
         {
             NodeName = NName;

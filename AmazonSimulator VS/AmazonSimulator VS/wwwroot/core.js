@@ -120,7 +120,7 @@ window.onload = function () {
             new THREE.MTLLoader()
                 .setPath(texturePath)
                 .load(textureName, function (materials) {     
-                    materials.color
+                    materials.color;
                     materials.preload();
 
                     new THREE.OBJLoader()
