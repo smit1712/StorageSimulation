@@ -1,38 +1,39 @@
-﻿using System;
+﻿using Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace AmazonSimulator
+namespace AmazonSimulator 
 {
-    public class Node
+    public class Node : Model3D, IUpdatable
     {
-        public double _x = 0;
-        public double _y = 0;
-        public double _z = 0;
+
 
         Node AdjacentNode1;
         Node AdjacentNode2;
+        Node AdjacentNode3;
 
         public string NodeName;
-        public Node(double x, double y, double z,string NName)
+        public Node(double x, double y, double z,string NName) : base(x, y, z, 0, 0, 0) 
         {
+            this.type = "node";
+            this.guid = Guid.NewGuid();
+
             NodeName = NName;
-            _x = x;
-            _y = y;
-            _z = z;
+
         }
         public double Getx()
         {
-            return _x;
+            return x;
         }
         public double Gety()
         {
-            return _y;
+            return y;
         }
         public double Getz()
         {
-            return _z;
+            return z;
         }
         public void AddAdjacentNode1(Node Node1)
         {
@@ -43,7 +44,10 @@ namespace AmazonSimulator
         {
             AdjacentNode2 = Node2;
         }
-
+        public void AddAdjacentNode3(Node Node3)
+        {
+            AdjacentNode3 = Node3;
+        }
         public Node GetAdjacentNode1()
         {
             return AdjacentNode1;
@@ -52,12 +56,16 @@ namespace AmazonSimulator
         {
             return AdjacentNode2;
         }
+        public Node GetAdjacentNode3()
+        {
+            return AdjacentNode3;
+        }
 
         public double GetDistanceNode1()
         {            
-            double Dx = Math.Pow((_x - AdjacentNode1.Getx()), 2);
-            double Dy = Math.Pow((_y - AdjacentNode1.Gety()), 2);
-            double Dz = Math.Pow((_z - AdjacentNode1.Getz()), 2);
+            double Dx = Math.Pow((x - AdjacentNode1.Getx()), 2);
+            double Dy = Math.Pow((y - AdjacentNode1.Gety()), 2);
+            double Dz = Math.Pow((z - AdjacentNode1.Getz()), 2);
 
             double result = (Dx + Dy + Dz) * 0.5;
 
@@ -65,19 +73,33 @@ namespace AmazonSimulator
         }
         public double GetDistanceNode2()
         {
-            double Dx = Math.Pow((_x - AdjacentNode2.Getx()), 2);
-            double Dy = Math.Pow((_y - AdjacentNode2.Gety()), 2);
-            double Dz = Math.Pow((_z - AdjacentNode2.Getz()), 2);
+            double Dx = Math.Pow((x - AdjacentNode2.Getx()), 2);
+            double Dy = Math.Pow((y - AdjacentNode2.Gety()), 2);
+            double Dz = Math.Pow((z - AdjacentNode2.Getz()), 2);
 
             double result = (Dx + Dy + Dz) * 0.5;
 
             return result;
         }
+        public double GetDistanceNode3()
+        {
+            if (AdjacentNode3 != null)
+            {
+                double Dx = Math.Pow((x - AdjacentNode3.Getx()), 2);
+                double Dy = Math.Pow((y - AdjacentNode3.Gety()), 2);
+                double Dz = Math.Pow((z - AdjacentNode3.Getz()), 2);
+
+                double result = (Dx + Dy + Dz) * 0.5;
+
+                return result;
+            }
+            else return 12345;
+        }
         public double GetDistanceTo(Node DistanceNode)
         {
-            double Dx = Math.Pow((_x - DistanceNode.Getx()), 2);
-            double Dy = Math.Pow((_y - DistanceNode.Gety()), 2);
-            double Dz = Math.Pow((_z - DistanceNode.Getz()), 2);
+            double Dx = Math.Pow((x - DistanceNode.Getx()), 2);
+            double Dy = Math.Pow((y - DistanceNode.Gety()), 2);
+            double Dz = Math.Pow((z - DistanceNode.Getz()), 2);
 
             double result = (Dx + Dy + Dz) * 0.5;
 

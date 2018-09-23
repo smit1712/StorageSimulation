@@ -30,45 +30,35 @@ namespace Models {
             CreateRack(15, 0.15, 15);
             CreateRack(20, 0.15, 20);
 
-            List<Node> NodeList = new List<Node>();
-            NodeList = FillNodeList();
+            NodeCreator nodeCreator = new NodeCreator(30, 30);
+            List<Node> NodeList = nodeCreator.GetNodeList();
+            List<Node> testlist = new List<Node>();
+            foreach(Node n in NodeList)
+            {
+                if(n.GetAdjacentNode3() != null)
+                {
+                    testlist.Add(n);
+                }
+            }
+            List<Node> adjlist = new List<Node>();
+            foreach (Node n in NodeList)
+            {
+                if (n.GetAdjacentNode3() != null)
+                {
+                    adjlist.Add(n.GetAdjacentNode3());
+                }
+            }
+
             Dijkstra dijkstra = new Dijkstra(NodeList);
-            List<Node> route = dijkstra.GetBestRoute(NodeList[2], NodeList[0],NodeList[2]);
+            List<Node> route = new List<Node>();
+            route = dijkstra.GetBestRoute(NodeList[1], NodeList[6], NodeList[1]);
             route.Reverse();
+            //worldObjects.AddRange(testlist);
+            //worldObjects.AddRange(adjlist);
+            worldObjects.AddRange(route);
         }
 
-        private List<Node> FillNodeList()
-        {
-            List<Node> Nlist = new List<Node>();
-            Node A = new Node(0, 0, 0, "A");
-            Node B = new Node(0, 0, 10.5, "B");
-            Node C = new Node(0, 0, 30, "C");
-            Node D = new Node(30, 0, 0, "D");
-            Node E = new Node(30, 0, 30, "E");
-
-            A.AddAdjacentNode1(E);
-            A.AddAdjacentNode2(B);
-
-            B.AddAdjacentNode1(A);
-            B.AddAdjacentNode2(C);
-
-            C.AddAdjacentNode1(B);
-            C.AddAdjacentNode2(D);
-
-            D.AddAdjacentNode1(C);
-            D.AddAdjacentNode2(E);
-
-            E.AddAdjacentNode1(D);
-            E.AddAdjacentNode2(A);
-
-            Nlist.Add(A);
-            Nlist.Add(B);
-            Nlist.Add(C);
-            Nlist.Add(D);
-            Nlist.Add(E);
-            return Nlist;
-        }
-
+       
         private Robot CreateRobot(double x, double y, double z) {
             Robot r = new Robot(x, y, z, 0, 0, 0);
             robots.Add(r);
@@ -113,6 +103,9 @@ namespace Models {
                                 break;
                             case "rack":
                                 break;
+                            case "node":                                
+                                break;
+
                         }
                         SendCommandToObservers(new UpdateModel3DCommand(m3d));  // Send Model through socket
                     }
