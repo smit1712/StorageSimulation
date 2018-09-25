@@ -8,8 +8,6 @@ namespace AmazonSimulator
 {
     public class Node : Model3D, IUpdatable
     {
-
-
         Node AdjacentNode1;
         Node AdjacentNode2;
         Node AdjacentNode3;

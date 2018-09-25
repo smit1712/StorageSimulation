@@ -10,7 +10,6 @@ namespace Models
         public Rack(double x, double y, double z, double rotationX, double rotationY, double rotationZ) : base(x, y, z, rotationX, rotationY, rotationZ)
         {
             this.type = "rack";
-            this.guid = Guid.NewGuid();
         }
     }
 }

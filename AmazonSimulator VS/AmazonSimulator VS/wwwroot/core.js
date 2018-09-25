@@ -112,7 +112,6 @@ window.onload = function () {
                 // Add group to Scene
                 scene.add(group);
                 worldObjects[command.parameters.guid] = group;
-
             }
 
             var object = worldObjects[command.parameters.guid];
@@ -124,6 +123,8 @@ window.onload = function () {
             object.rotation.x = command.parameters.rotationX;
             object.rotation.y = command.parameters.rotationY;
             object.rotation.z = command.parameters.rotationZ;
+
+            object.visible = command.parameters.visible;
         }
 
         function loadOBJModel(modelPath, modelName, texturePath, textureName, onload) {
