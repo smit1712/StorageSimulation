@@ -10,8 +10,6 @@ namespace Models {
     {
         // All models
         private List<Model3D> worldObjects = new List<Model3D>();
-        // Robots
-        private List<Robot> robots = new List<Robot>();
         // Racks
         private List<Rack> newRacks = new List<Rack>();
         private List<Rack> storedRacks = new List<Rack>();
@@ -23,7 +21,7 @@ namespace Models {
             CreateTransport(-1.0, 0.4, -10);
 
             CreateRobot(10, 0.15, 10);
-            CreateRobot(1, 0.15, 5);
+            Robot testRobot = CreateRobot(1, 0.15, 5);
 
             CreateRack(5, 0.15, 5);
             CreateRack(10, 0.15, 10);
@@ -51,17 +49,25 @@ namespace Models {
 
             Dijkstra dijkstra = new Dijkstra(NodeList);
             List<Node> route = new List<Node>();
-            route = dijkstra.GetBestRoute(NodeList[1], NodeList[6], NodeList[1]);
+            route = dijkstra.GetBestRoute(NodeList[1], NodeList[9], NodeList[1]);
             route.Reverse();
             //worldObjects.AddRange(testlist);
             //worldObjects.AddRange(adjlist);
             worldObjects.AddRange(route);
+
+            // Let Robot loop
+            testRobot.AddTask(new RobotMove(route.ToArray()));
+            testRobot.AddTask(new RobotMove(route.ToArray()));
+            testRobot.AddTask(new RobotMove(route.ToArray()));
+            testRobot.AddTask(new RobotMove(route.ToArray()));
+            testRobot.AddTask(new RobotMove(route.ToArray()));
+            testRobot.AddTask(new RobotMove(route.ToArray()));
+            testRobot.AddTask(new RobotMove(route.ToArray()));
         }
 
        
         private Robot CreateRobot(double x, double y, double z) {
             Robot r = new Robot(x, y, z, 0, 0, 0);
-            robots.Add(r);
             worldObjects.Add(r);
             return r;
         }
@@ -91,89 +97,30 @@ namespace Models {
 
                     if (needsCommand)
                     {
-                        switch (m3d.type)
+                        if  (m3d is Robot)
                         {
-                            case "transport":
-                                MoveTransport(m3d);
-                                break;
+                            Robot r = (Robot)m3d;
+                            // route defines an List of nodes
+                            //r.AddTask(new RobotMove(route.ToArray()));
+                        } else if (m3d is Transport)
+                        {
+                            Transport t = (Transport)m3d;
+                            t.UpdatePosition();
+                        } else if (m3d is Rack)
+                        {
 
-                            case "robot":
-                                Robot r = robots.Find(x => x.guid == m3d.guid);
-                                MoveRobot(r);
-                                break;
-                            case "rack":
-                                break;
-                            case "node":                                
-                                break;
+                        } else if (m3d is Node)
+                        {
 
                         }
-                        SendCommandToObservers(new UpdateModel3DCommand(m3d));  // Send Model through socket
+
+                        SendCommandToObservers(new UpdateModel3DCommand(m3d));
+                        // Send Model through socket
                     }
                 }
             }
 
             return true;
-        }
-
-        double temporaryZ = 0;
-        bool countedTick = false;
-        int countTick = 0;
-        public void MoveTransport(Model3D transport)
-        {
-            if (countTick > 0)
-            {
-                countTick++;
-                Console.WriteLine(countTick);
-                if (countTick > 30)
-                {
-                    countTick = 0;
-                }
-                transport.Move(transport.x, transport.y, transport.z);
-                return;
-            }
-
-            if (transport.z >= 10 && !countedTick)
-            {
-                countTick = 1;
-                countedTick = true;
-                transport.Move(transport.x, transport.y, transport.z);
-            }
-            else if (transport.z > 30)
-            {
-                temporaryZ = 0;
-                transport.Move(transport.x, transport.y, temporaryZ);
-                countedTick = false;
-                countTick = 0;
-            }
-            else
-            {
-                temporaryZ = transport.z + 0.15;
-                transport.Move(transport.x, transport.y, temporaryZ);
-            }
-        }
-
-        public void MoveRobot(Robot robot)
-        {
-            robot.SearchRack();
-
-            if (robot.reachedDestiny)
-            {
-                if (!robot.hasRack)
-                {
-                    if (storedRacks.Count > 0)
-                    {
-                        Random rnd = new Random();
-                        int index = rnd.Next(storedRacks.Count);
-                        Rack rack = storedRacks[index];
-                        robot.PickupRack(rack);
-                        storedRacks.RemoveAt(index);
-                    }
-                } else
-                {
-                    emptyRacks.Add(robot.currentRack);
-                    robot.DropRack();
-                }
-            }
         }
 
         public IDisposable Subscribe(IObserver<Command> observer)

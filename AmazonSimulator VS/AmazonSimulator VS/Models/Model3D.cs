@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-	public class Model3D
+	abstract public class Model3D
 {
         private double _x = 0;
         private double _y = 0;
@@ -23,6 +23,7 @@ namespace Models
         public double rotationY { get { return _rY; } }
         public double rotationZ { get { return _rZ; } }
 
+        public bool visible = true;
         public bool needsUpdate = true;
 
         public Model3D(double x, double y, double z, double rotationX, double rotationY, double rotationZ)
@@ -34,6 +35,8 @@ namespace Models
             this._rX = rotationX;
             this._rY = rotationY;
             this._rZ = rotationZ;
+
+            this.guid = Guid.NewGuid();
         }
 
         public virtual bool Update(int tick)
@@ -46,7 +49,7 @@ namespace Models
             return false;
         }
 
-        public virtual void Move(double x, double y, double z)
+        public void Move(double x, double y, double z)
         {
             this._x = x;
             this._y = y;

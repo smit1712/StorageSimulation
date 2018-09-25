@@ -6,42 +6,35 @@ using Newtonsoft.Json;
 namespace Models {
     public class Robot : Model3D, IUpdatable
     {
+        private List<IRobotTask> tasks = new List<IRobotTask>();
         public Rack currentRack;
 
         public bool hasRack = false;
-        public bool reachedDestiny = false;
 
         public Robot(double x, double y, double z, double rotationX, double rotationY, double rotationZ) : base(x,y,z,rotationX,rotationY,rotationZ)
         {
             this.type = "robot";
-            this.guid = Guid.NewGuid();
         }
-        
-        bool forward = true;
-        public void SearchRack()
+
+        public void AddTask(IRobotTask task)
         {
-            double destX;
-            
-            if (forward) {
-                destX = x + .15;
-            } else {
-                destX = x - .15;
+            tasks.Add(task);
+        }
+
+        public override bool Update(int tick)
+        {
+            if (tasks.Count > 0)
+            {
+                if (tasks.First().TaskCompleted(this))
+                {
+                    tasks.RemoveAt(0);
+                } else
+                {
+                    tasks.First().StartTask(this);
+                }
             }
 
-            Move(destX, y, z);
-            if (currentRack != null)
-            {
-                currentRack.Move(destX, y + 2, z);
-            }
-
-            if (x < 1 || x > 20)
-            {
-                forward = !forward;
-                reachedDestiny = true;
-            } else
-            {
-                reachedDestiny = false;
-            }
+            return true;
         }
 
         public void PickupRack(Rack rack)
