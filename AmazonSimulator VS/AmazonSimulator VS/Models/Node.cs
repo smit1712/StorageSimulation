@@ -14,6 +14,9 @@ namespace AmazonSimulator
         Node AdjacentNode2;
         Node AdjacentNode3;
 
+        Node PreviousNode;
+
+        private double DistanceFromOrigin;
         public string NodeName;
         public Node(double x, double y, double z,string NName) : base(x, y, z, 0, 0, 0) 
         {
@@ -105,7 +108,22 @@ namespace AmazonSimulator
 
             return result;
         }
-
+        public void SetDistanceFromOrigin(double Distance)
+        {
+            DistanceFromOrigin = Distance;
+        }
+        public double GetDistanceFromOrigin()
+        {
+            return DistanceFromOrigin;
+        }
+        public void SetPreviousNode(Node node)
+        {
+            PreviousNode = node;
+        }
+        public Node GetPreviousNode()
+        {
+            return PreviousNode;
+        }
 
 
     }

@@ -88,7 +88,7 @@ window.onload = function () {
                     // Add object to group
                     group.add(robot);
                 } else if (command.parameters.type === "rack") {
-                    loadOBJModel("models/rack/", "rack.obj", "models/rack/", "rack.mtl", (obj) => {       
+                    loadOBJModel("models/rack/", "rack.obj", "models/rack/", "rack.mtl", (obj) => {
                         obj.scale.set(0.03, 0.03, 0.03);
                         group.add(obj);
                     });
@@ -102,8 +102,12 @@ window.onload = function () {
                     var boxmaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
                     var cube = new THREE.Mesh(boxgeometry, boxmaterial);
                     group.add(cube);
-                    };
-                
+                } else if (command.parameters.type === "adj") {
+                    var adjgeometry = new THREE.BoxGeometry(0.1, 10.0, 0.1);
+                    var adhmaterial = new THREE.MeshBasicMaterial({ color: 0xf44242 });
+                    var adjcube = new THREE.Mesh(adjgeometry, adhmaterial);
+                    group.add(adjcube);
+                }
 
                 // Add group to Scene
                 scene.add(group);

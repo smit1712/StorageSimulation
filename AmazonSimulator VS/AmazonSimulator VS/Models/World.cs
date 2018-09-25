@@ -32,12 +32,12 @@ namespace Models {
 
             NodeCreator nodeCreator = new NodeCreator(30, 30);
             List<Node> NodeList = nodeCreator.GetNodeList();
-            List<Node> testlist = new List<Node>();
+            List<Node> CornerList = new List<Node>();
             foreach(Node n in NodeList)
             {
                 if(n.GetAdjacentNode3() != null)
                 {
-                    testlist.Add(n);
+                    CornerList.Add(n);
                 }
             }
             List<Node> adjlist = new List<Node>();
@@ -46,16 +46,17 @@ namespace Models {
                 if (n.GetAdjacentNode3() != null)
                 {
                     adjlist.Add(n.GetAdjacentNode3());
+                    n.type = "adj";
                 }
             }
 
             Dijkstra dijkstra = new Dijkstra(NodeList);
             List<Node> route = new List<Node>();
-            route = dijkstra.GetBestRoute(NodeList[1], NodeList[6], NodeList[1]);
-            route.Reverse();
-            //worldObjects.AddRange(testlist);
-            //worldObjects.AddRange(adjlist);
-            worldObjects.AddRange(route);
+            route = dijkstra.GetBestRoute(NodeList[0],NodeList[12]);
+            //worldObjects.AddRange(NodeList);
+          //  worldObjects.AddRange(CornerList);
+           // worldObjects.AddRange(adjlist);
+           worldObjects.AddRange(route);
         }
 
        

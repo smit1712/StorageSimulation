@@ -17,51 +17,39 @@ namespace AmazonSimulator
             
             maxZ = MaxZ;
         }        
-            //A.AddAdjacentNode1(E);
-            //A.AddAdjacentNode2(B);
 
-            //B.AddAdjacentNode1(A);
-            //B.AddAdjacentNode2(C);
-
-            //C.AddAdjacentNode1(B);
-            //C.AddAdjacentNode2(D);
-
-            //D.AddAdjacentNode1(C);
-            //D.AddAdjacentNode2(E);
-
-            //E.AddAdjacentNode1(D);
-            //E.AddAdjacentNode2(A);
         public List<Node> GetNodeList()
         {
             double x = maxX;
             double z = maxZ;
-            while ((z - 5) >= -5)
+            while ((x - 5) >= -5)
             {
-                while ((x -5) >= -5)
+                while ((z -5) >= -5)
                 {
                     Node node = new Node(x, 0, z, newnodeID.ToString());
                     Nlist.Add(node);
-                    x = x - 5;
+                    z = z - 5;
                     newnodeID++;
                     
                 }
                 
-                z = z - 5;
-                x = maxX;
+                x = x - 5;
+                z = maxZ;
 
             }
             int nodecounter = 0;
+            int rowsize = Convert.ToInt32((maxX / 5) );
             foreach (Node N in Nlist)
             {
                 if (nodecounter == 0)
                 {
-                    N.AddAdjacentNode1(Nlist.Last());
+                    N.AddAdjacentNode1(Nlist[1]);
                     N.AddAdjacentNode2(Nlist[1]);
                     
                 } else if (nodecounter +1  == Nlist.Count)
                 {
                     N.AddAdjacentNode1(Nlist[nodecounter - 1]);
-                    N.AddAdjacentNode2(Nlist.First());
+                    N.AddAdjacentNode2(Nlist[nodecounter - 1]);
                     
                 }
                 else
@@ -70,20 +58,15 @@ namespace AmazonSimulator
                     N.AddAdjacentNode2(Nlist[nodecounter + 1]);
                     
                 }
-                if (N.z == 0)
+                if (N.x == 0)
                 {
-                    N.AddAdjacentNode3(Nlist[nodecounter-7]);
+                    N.AddAdjacentNode3(Nlist[nodecounter- rowsize]);
                 }
-                if(N.z == maxZ)
+                if(N.x == maxX)
                 {
-                    N.AddAdjacentNode3(Nlist[nodecounter + 7]);
+                    N.AddAdjacentNode3(Nlist[nodecounter + rowsize]);
                 }
-                //if (N.z == 0 || N.z == maxZ)
-                //{
-                //   double tempz = N.z;
-                //   int tempint = Convert.ToInt32(tempz / (maxz + tempz));
-                //    N.AddAdjacentNode3(Nlist[tempint]);
-                //}
+
                 nodecounter++;
             }
 
