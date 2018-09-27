@@ -49,8 +49,7 @@ namespace Models {
 
             Dijkstra dijkstra = new Dijkstra(NodeList);
             List<Node> route = new List<Node>();
-            route = dijkstra.GetBestRoute(NodeList[0], NodeList[1]);
-            //route.Reverse();
+            //route = dijkstra.GetBestRoute(NodeList[0], NodeList[1]);            
             //worldObjects.AddRange(CornerList);
             //worldObjects.AddRange(adjlist);
             //worldObjects.AddRange(route);
@@ -62,13 +61,7 @@ namespace Models {
                 route = dijkstra.GetBestRoute(NodeList[0], NodeList[Convert.ToInt32(N.NodeName)]);
                 testRobot.AddTask(new RobotMove(route.ToArray()));
             }
-            //testRobot.AddTask(new RobotMove(route.ToArray()));
-            //testRobot.AddTask(new RobotMove(route.ToArray()));
-            //testRobot.AddTask(new RobotMove(route.ToArray()));
-            //testRobot.AddTask(new RobotMove(route.ToArray()));
-            //testRobot.AddTask(new RobotMove(route.ToArray()));
-            //testRobot.AddTask(new RobotMove(route.ToArray()));
-            //testRobot.AddTask(new RobotMove(route.ToArray()));
+           
         }
 
        
