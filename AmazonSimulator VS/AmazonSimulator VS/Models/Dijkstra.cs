@@ -10,6 +10,7 @@ namespace AmazonSimulator
         private List<Node> NodeList;
         List<Node> path1;
         List<Node> path2;
+        List<Node> path3;
         List<Node> unvisited;
         List<Node> visited;
         public Dijkstra(List<Node> Nodelist)
@@ -25,30 +26,38 @@ namespace AmazonSimulator
             {
                 n.SetDistanceFromOrigin(double.PositiveInfinity);
             }
-            
-            visited = new List<Node>();
 
+            visited = new List<Node>();
+            CurrentNode.SetPreviousNode(CurrentNode.GetAdjacentNode1());
             path1 = ShortestPath(CurrentNode, CurrentNode, DestinationNode, 0, visited, unvisited);
             visited = new List<Node>();
+            CurrentNode.SetPreviousNode(CurrentNode.GetAdjacentNode2());
             path2 = ShortestPath(CurrentNode, CurrentNode, DestinationNode, 0, visited, unvisited);
-            while(path1.Count != path2.Count)
+            visited = new List<Node>();
+            CurrentNode.SetPreviousNode(CurrentNode.GetAdjacentNode3());
+            path3 = ShortestPath(CurrentNode, CurrentNode, DestinationNode, 0, visited, unvisited);
+            CurrentNode.SetPreviousNode(null);
+
+
+            if (path1.Count <= path2.Count && path1.Count < path3.Count)
             {
-               
-                    path1 = ShortestPath(CurrentNode, CurrentNode, DestinationNode, 0, visited, unvisited);
-                    visited = new List<Node>();
-                    path2 = ShortestPath(CurrentNode, CurrentNode, DestinationNode, 0, visited, unvisited);
-                    visited = new List<Node>();
-
-                
-
+                return path1;
             }
-            return path1;
+            if (path2.Count <= path1.Count && path2.Count < path3.Count)
+            {
+                return path2;
+            }
+            else
+            {
+                return path3;
+            }
+
 
         }
 
         private List<Node> ShortestPath(Node CurrentNode, Node origin, Node destination, double totaldistance, List<Node> visited, List<Node> unvisited) {
 
-            if (CurrentNode == destination)
+            if (CurrentNode == destination || visited.Count() > NodeList.Count())
             {
                 visited.Add(CurrentNode);
                 return visited;
@@ -61,8 +70,10 @@ namespace AmazonSimulator
             double distance1 = CurrentNode.GetDistanceNode1();
             Node Adj2 = CurrentNode.GetAdjacentNode2();
             double distance2 = CurrentNode.GetDistanceNode2();
-            Node Adj3 = new Node(0, 0, 0, "Adj3");
+            Node Adj3 = new Node(double.NegativeInfinity, double.NegativeInfinity, double.NegativeInfinity, "Adj3");
             double distance3 = double.PositiveInfinity;
+
+           
             if (CurrentNode.GetAdjacentNode3() != null)
             {
                 Adj3 = CurrentNode.GetAdjacentNode3();
@@ -86,7 +97,82 @@ namespace AmazonSimulator
                 Adj2.SetPreviousNode(CurrentNode);
                 distance2 = distance2 + totaldistance;
             }
-    
+
+
+            if (Adj2.z == destination.z && CurrentNode.GetPreviousNode() != Adj2)
+            {
+                Adj2.SetPreviousNode(CurrentNode);
+                visited = ShortestPath(Adj2, origin, destination, distance2, visited, unvisited);
+                return visited;
+            }
+            if (Adj3.z == destination.z && CurrentNode.GetPreviousNode() != Adj3)
+            {
+                Adj3.SetPreviousNode(CurrentNode);
+                visited = ShortestPath(Adj3, origin, destination, distance3, visited, unvisited);
+                return visited;
+            }
+            if (Adj1.z == destination.z && CurrentNode.GetPreviousNode() != Adj1)
+            {
+                Adj1.SetPreviousNode(CurrentNode);
+                visited = ShortestPath(Adj1, origin, destination, distance1, visited, unvisited);
+                return visited;
+            }
+            if (CurrentNode.type == "adj")
+            {
+                double adj1ToDestination = double.PositiveInfinity;
+                double adj2ToDestination = double.PositiveInfinity;
+                double adj3ToDestination = double.PositiveInfinity;
+                if (Adj1 != CurrentNode.GetPreviousNode())
+                {                    
+                    adj1ToDestination = Adj1.GetDistanceTo(destination);
+                    if (Adj1.type == "adj")
+                    {
+                        adj1ToDestination -= 100;
+                    }
+                }
+                if (Adj2 != CurrentNode.GetPreviousNode())
+                {
+                    adj2ToDestination = Adj2.GetDistanceTo(destination);
+                    if (Adj2.type == "adj")
+                    {
+                        adj2ToDestination -= 100;
+                    }
+                }
+                if (Adj3 != CurrentNode.GetPreviousNode())
+                {
+                    adj3ToDestination = Adj3.GetDistanceTo(destination);
+                    if (Adj3.type == "adj")
+                    {
+                        adj3ToDestination -= 100;
+                    }
+                }               
+                 
+
+                if (adj1ToDestination < adj2ToDestination && adj1ToDestination < adj3ToDestination  )
+                {
+                    Adj1.SetPreviousNode(CurrentNode);
+                    visited = ShortestPath(Adj1, origin, destination, distance2, visited, unvisited);
+                    return visited;
+                }
+                if (adj2ToDestination < adj1ToDestination && adj2ToDestination < adj3ToDestination )
+                {
+                    Adj2.SetPreviousNode(CurrentNode);
+                    visited = ShortestPath(Adj2, origin, destination, distance2, visited, unvisited);
+                    return visited;
+                }
+                if (adj3ToDestination < adj2ToDestination && adj3ToDestination < adj1ToDestination )
+                {
+                    Adj3.SetPreviousNode(CurrentNode);
+                    visited = ShortestPath(Adj3, origin, destination, distance3, visited, unvisited);
+                    return visited;
+                }
+            }
+
+            
+
+
+
+
             List<double> Distances = new List<double>();
             Distances.Add(distance1);
             Distances.Add(distance2);
@@ -94,13 +180,6 @@ namespace AmazonSimulator
             Distances.Sort();
             
             selectNode:
-
-            if (distance1 == Distances[0] && CurrentNode.GetPreviousNode() != Adj1)
-            {
-                Adj1.SetPreviousNode(CurrentNode);
-                visited = ShortestPath(Adj1, origin, destination, distance1, visited, unvisited);
-                return visited;
-            }
             if (distance2 == Distances[0] && CurrentNode.GetPreviousNode() != Adj2)
             {
                 Adj2.SetPreviousNode(CurrentNode);
@@ -113,8 +192,12 @@ namespace AmazonSimulator
                 visited = ShortestPath(Adj3, origin, destination, distance3, visited, unvisited);
                 return visited;
             }
-
-
+            if (distance1 == Distances[0] && CurrentNode.GetPreviousNode() != Adj1)
+            {
+                Adj1.SetPreviousNode(CurrentNode);
+                visited = ShortestPath(Adj1, origin, destination, distance1, visited, unvisited);
+                return visited;
+            }
 
             if (Adj1 == destination)
             {
@@ -128,6 +211,9 @@ namespace AmazonSimulator
             {
                 return ShortestPath(Adj3, origin, destination, distance3, visited, unvisited);
             }
+
+
+
 
             Distances.RemoveAt(0);
             goto selectNode;

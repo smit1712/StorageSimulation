@@ -21,7 +21,7 @@ namespace Models {
             CreateTransport(-1.0, 0.4, -10);
 
             CreateRobot(10, 0.15, 10);
-            Robot testRobot = CreateRobot(1, 0.15, 5);
+            
 
             CreateRack(5, 0.15, 5);
             CreateRack(10, 0.15, 10);
@@ -30,7 +30,7 @@ namespace Models {
 
             NodeCreator nodeCreator = new NodeCreator(30, 30);
             List<Node> NodeList = nodeCreator.GetNodeList();
-            List<Node> CornerList = new List<Node>();
+            List<Node> CornerList = new List<Node>();    
             foreach(Node n in NodeList)
             {
                 if(n.GetAdjacentNode3() != null)
@@ -44,26 +44,31 @@ namespace Models {
                 if (n.GetAdjacentNode3() != null)
                 {
                     adjlist.Add(n.GetAdjacentNode3());
-                    n.type = "adj";
                 }
             }
 
             Dijkstra dijkstra = new Dijkstra(NodeList);
             List<Node> route = new List<Node>();
-            route = dijkstra.GetBestRoute(NodeList[1], NodeList[9], NodeList[1]);
-            route.Reverse();
-            //worldObjects.AddRange(testlist);
+            route = dijkstra.GetBestRoute(NodeList[0], NodeList[1]);
+            //route.Reverse();
+            //worldObjects.AddRange(CornerList);
             //worldObjects.AddRange(adjlist);
-            worldObjects.AddRange(route);
+            //worldObjects.AddRange(route);
 
             // Let Robot loop
-            testRobot.AddTask(new RobotMove(route.ToArray()));
-            testRobot.AddTask(new RobotMove(route.ToArray()));
-            testRobot.AddTask(new RobotMove(route.ToArray()));
-            testRobot.AddTask(new RobotMove(route.ToArray()));
-            testRobot.AddTask(new RobotMove(route.ToArray()));
-            testRobot.AddTask(new RobotMove(route.ToArray()));
-            testRobot.AddTask(new RobotMove(route.ToArray()));
+            foreach(Node N in NodeList)
+            {
+                Robot testRobot = CreateRobot(1, 0.15, 5);
+                route = dijkstra.GetBestRoute(NodeList[0], NodeList[Convert.ToInt32(N.NodeName)]);
+                testRobot.AddTask(new RobotMove(route.ToArray()));
+            }
+            //testRobot.AddTask(new RobotMove(route.ToArray()));
+            //testRobot.AddTask(new RobotMove(route.ToArray()));
+            //testRobot.AddTask(new RobotMove(route.ToArray()));
+            //testRobot.AddTask(new RobotMove(route.ToArray()));
+            //testRobot.AddTask(new RobotMove(route.ToArray()));
+            //testRobot.AddTask(new RobotMove(route.ToArray()));
+            //testRobot.AddTask(new RobotMove(route.ToArray()));
         }
 
        
