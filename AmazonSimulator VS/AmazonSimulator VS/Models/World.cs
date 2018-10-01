@@ -11,6 +11,8 @@ namespace Models {
         // All models
         private List<Model3D> worldObjects = new List<Model3D>();
         // Racks
+        
+        
         private List<Rack> newRacks = new List<Rack>();
         private List<Rack> storedRacks = new List<Rack>();
         private List<Rack> emptyRacks = new List<Rack>();
@@ -21,7 +23,9 @@ namespace Models {
             CreateTransport(-1.0, 0.4, -10);
 
             CreateRobot(10, 0.15, 10);
-            
+            Sun Sun = new Sun(0, 0, 0, 0, 0, 0, 0.1,500);
+            worldObjects.Add(Sun);
+
 
             CreateRack(5, 0.15, 5);
             CreateRack(10, 0.15, 10);
@@ -55,16 +59,24 @@ namespace Models {
             //worldObjects.AddRange(route);
 
             // Let Robot loop
-            foreach(Node N in NodeList)
-            {
-                Robot testRobot = CreateRobot(1, 0.15, 5);
-                route = dijkstra.GetBestRoute(NodeList[0], NodeList[Convert.ToInt32(N.NodeName)]);
-                testRobot.AddTask(new RobotMove(route.ToArray()));
-            }
-           
+            //foreach(Node N in NodeList)
+                //{
+                //    Robot testRobot = CreateRobot(NodeList[0].Getx(), NodeList[0].Gety(), NodeList[0].Getz());
+                //    route = dijkstra.GetBestRoute(NodeList[0], NodeList[Convert.ToInt32(N.NodeName)]);
+                //    testRobot.AddTask(new RobotMove(route.ToArray()));
+                //}
+                Robot testRobot = CreateRobot(NodeList[0].Getx(), NodeList[0].Gety(), NodeList[0].Getz());
+            route = dijkstra.GetBestRoute(NodeList[0], NodeList[18]);
+            testRobot.AddTask(new RobotMove(route.ToArray()));
+            route.Reverse();
+            testRobot.AddTask(new RobotMove(route.ToArray()));
+            route.Reverse();
+            testRobot.AddTask(new RobotMove(route.ToArray()));
+            route.Reverse();
+            testRobot.AddTask(new RobotMove(route.ToArray()));
         }
 
-       
+
         private Robot CreateRobot(double x, double y, double z) {
             Robot r = new Robot(x, y, z, 0, 0, 0);
             worldObjects.Add(r);
@@ -111,6 +123,9 @@ namespace Models {
                         } else if (m3d is Node)
                         {
 
+                        } else if (m3d is Sun)
+                        {
+                            
                         }
 
                         SendCommandToObservers(new UpdateModel3DCommand(m3d));
