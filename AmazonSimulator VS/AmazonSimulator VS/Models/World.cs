@@ -34,7 +34,6 @@ namespace Models {
             this.nodeList = nodeCreator.GetNodeList();
             this.homeNode = nodeList[27];
 
-            CreateRobot(10, 0.15, 10);
             Sun Sun = new Sun(0, 0, 0, 0, 0, 0, 100,500);
             worldObjects.Add(Sun);
 
@@ -155,6 +154,10 @@ namespace Models {
                                     r.AddTask(new RobotDropRack());
 
                                     // Update storage
+
+                                    ///
+                                    /// Hier gaat nog iets mis
+                                    ///
                                     int test = storedRacks.IndexOf(chosenRack);
                                     emptyRacks.Add(chosenRack);
                                     storedRacks.RemoveAt(test);
@@ -232,7 +235,8 @@ namespace Models {
                         } else if (worldObjects[i] is Node)
                         {
 
-                        } else if (m3d is Sun)
+                        }
+                        else if (worldObjects[i] is Sun)
                         {
                             
                         }
