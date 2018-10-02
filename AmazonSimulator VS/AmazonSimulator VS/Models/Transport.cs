@@ -7,9 +7,9 @@ using System.Threading;
 namespace Models
 {
 	public class Transport : Model3D, IUpdatable
-{
-        Stack<Rack> Rackstack = new Stack<Rack>();
-
+    {
+        public bool reachedLoader = false;
+        public bool createdRacks = false;
 
         public Transport(double x, double y, double z, double rotationX, double rotationY, double rotationZ) : base(x, y, z, rotationX, rotationY, rotationZ)
         {
@@ -24,18 +24,21 @@ namespace Models
             if (countTick > 0)
             {
                 countTick++;
-                Console.WriteLine(countTick);
+
                 if (countTick > 50)
                 {
                     countTick = 0;
+                    reachedLoader = false;
+                    createdRacks = false;
                 }
                 needsUpdate = true;
                 return;
             }
             
-            if (z >= 10.5 && z < 30 && !countedTick)
+            if (z >= 12.5 && z < 30 && !countedTick)
             {
                 countTick = 1;
+                reachedLoader = true;
                 countedTick = true;
                 needsUpdate = true;
                 return;
@@ -63,6 +66,11 @@ namespace Models
             }
 
             Move(x, y, newZ);
+        }
+
+        private void CreateRacks()
+        {
+
         }
     }
 }

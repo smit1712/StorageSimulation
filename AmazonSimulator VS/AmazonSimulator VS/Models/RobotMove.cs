@@ -24,6 +24,7 @@ namespace Models
                 return;
             }
 
+            r.currentNode = path[0];
             MoveOverPath(r);
         }
 
@@ -96,6 +97,10 @@ namespace Models
 
             // Move robot to new position
             r.Move(newX, newY, newZ);
+            if (r.currentRack != null)
+            {
+                r.currentRack.Move(newX, newY, newZ);
+            }
         }
     }
 }

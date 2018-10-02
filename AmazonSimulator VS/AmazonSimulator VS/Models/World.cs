@@ -8,38 +8,66 @@ using AmazonSimulator;
 namespace Models {
     public class World : IObservable<Command>, IUpdatable
     {
+        // Nodes en Dijkstra algorithm
+        private List<Node> nodeList = new List<Node>();
+        private List<bool> rackPlacedList = new List<bool>();
+        private Node homeNode;
+        private Dijkstra dijkstra;
         // All models
         private List<Model3D> worldObjects = new List<Model3D>();
         // Racks
         private List<Rack> newRacks = new List<Rack>();
         private List<Rack> storedRacks = new List<Rack>();
         private List<Rack> emptyRacks = new List<Rack>();
+        // Used for randomness in spawning/getting racks
+        private Random random = new Random();
         // Clients
         private List<IObserver<Command>> observers = new List<IObserver<Command>>();
 
         public World() {
             CreateTransport(-1.0, 0.4, -10);
 
-            CreateRobot(10, 0.15, 10);
-            
-
-            CreateRack(5, 0.15, 5);
-            CreateRack(10, 0.15, 10);
-            CreateRack(15, 0.15, 15);
-            CreateRack(20, 0.15, 20);
-
+            // Setup all nodes
             NodeCreator nodeCreator = new NodeCreator(30, 30);
-            List<Node> NodeList = nodeCreator.GetNodeList();
+            this.nodeList = nodeCreator.GetNodeList();
+            this.homeNode = nodeList[27];
+
+            CreateRobot(10, 0.15, 10, this.homeNode);
+            CreateRobot(10, 0.15, 10, this.homeNode);
+            CreateRobot(10, 0.15, 10, this.homeNode);
+            CreateRobot(10, 0.15, 10, this.homeNode);
+            CreateRobot(10, 0.15, 10, this.homeNode);
+            CreateRobot(10, 0.15, 10, this.homeNode);
+            CreateRobot(10, 0.15, 10, this.homeNode);
+            CreateRobot(10, 0.15, 10, this.homeNode);
+            CreateRobot(10, 0.15, 10, this.homeNode);
+            CreateRobot(10, 0.15, 10, this.homeNode);
+            CreateRobot(10, 0.15, 10, this.homeNode);
+            CreateRobot(10, 0.15, 10, this.homeNode);
+
+            // Set list that tracks wether a node 
+            for (int i = nodeList.Count; i > 0; i--)
+            {
+                if (i != 1 && i % 7 == 1)
+                {
+                    rackPlacedList.Add(true);
+                } else
+                {
+                    rackPlacedList.Add(false);
+                }
+            }
+
             List<Node> CornerList = new List<Node>();    
-            foreach(Node n in NodeList)
+            foreach(Node n in nodeList)
             {
                 if(n.GetAdjacentNode3() != null)
                 {
                     CornerList.Add(n);
                 }
             }
+
             List<Node> adjlist = new List<Node>();
-            foreach (Node n in NodeList)
+            foreach (Node n in this.nodeList)
             {
                 if (n.GetAdjacentNode3() != null)
                 {
@@ -47,34 +75,43 @@ namespace Models {
                 }
             }
 
-            Dijkstra dijkstra = new Dijkstra(NodeList);
+            this.dijkstra = new Dijkstra(nodeList);
             List<Node> route = new List<Node>();
-            //route = dijkstra.GetBestRoute(NodeList[0], NodeList[1]);            
+
+            // Try out node route
+            //Robot r = CreateRobot(10, 0.15, 10, this.homeNode);
+            //route = this.dijkstra.GetBestRoute(nodeList[5], nodeList[27]);
+            //r.AddTask(new RobotMove(route.ToArray()));
+
+            //this.newRacks.Add(CreateRack(3, 0.15, 12.5, this.homeNode));
+            //CreateRack(10, 0.15, 10);
+            //CreateRack(15, 0.15, 15);
+            //CreateRack(20, 0.15, 20);
+
             //worldObjects.AddRange(CornerList);
             //worldObjects.AddRange(adjlist);
             //worldObjects.AddRange(route);
 
             // Let Robot loop
-            foreach(Node N in NodeList)
-            {
-                Robot testRobot = CreateRobot(1, 0.15, 5);
-                route = dijkstra.GetBestRoute(NodeList[0], NodeList[Convert.ToInt32(N.NodeName)]);
-                testRobot.AddTask(new RobotMove(route.ToArray()));
-            }
-           
+            //foreach(Node N in NodeList)
+            //{
+            //    Robot testRobot = CreateRobot(1, 0.15, 5);
+            //    route = dijkstra.GetBestRoute(NodeList[0], NodeList[Convert.ToInt32(N.NodeName)]);
+            //    testRobot.AddTask(new RobotMove(route.ToArray()));
+            //}
+
         }
 
        
-        private Robot CreateRobot(double x, double y, double z) {
-            Robot r = new Robot(x, y, z, 0, 0, 0);
+        private Robot CreateRobot(double x, double y, double z, Node node) {
+            Robot r = new Robot(x, y, z, 0, 0, 0, node);
             worldObjects.Add(r);
             return r;
         }
 
-        private Rack CreateRack(double x, double y, double z)
+        private Rack CreateRack(double x, double y, double z, Node node)
         {
-            Rack r = new Rack(x, y, z, 0, 0, 0);
-            storedRacks.Add(r);
+            Rack r = new Rack(x, y, z, 0, 0, 0, node);
             worldObjects.Add(r);
             return r;
         }
@@ -88,33 +125,126 @@ namespace Models {
 
         public bool Update(int tick)
         {
-            foreach (Model3D m3d in worldObjects)
-            {
-                if (m3d is IUpdatable)
+            for (int i = worldObjects.Count-1; i >= 0; i--)
+            { 
+                if (worldObjects[i] is IUpdatable)
                 {
-                    bool needsCommand = ((IUpdatable)m3d).Update(tick);
+                    bool needsCommand = ((IUpdatable)worldObjects[i]).Update(tick);
 
                     if (needsCommand)
                     {
-                        if  (m3d is Robot)
+                        if  (worldObjects[i] is Robot)
                         {
-                            Robot r = (Robot)m3d;
-                            // route defines an List of nodes
-                            //r.AddTask(new RobotMove(route.ToArray()));
-                        } else if (m3d is Transport)
+                            Robot r = (Robot)worldObjects[i];
+                            if (r.currentNode == homeNode && r.currentRack == null)
+                            {
+                                if (storedRacks.Count > 5) // Search for rack and place it at the home node
+                                {
+                                    Rack chosenRack = null;
+                                    bool chooseRack = true;
+
+                                    int numb = 0;
+                                    while (chooseRack)
+                                    {
+                                        numb = random.Next(0, storedRacks.Count);
+                                        bool getRack = rackPlacedList[numb];
+
+                                        if (getRack)    // Chosen position contains a rack
+                                        {
+                                            chooseRack = false;
+                                            rackPlacedList[numb] = false;
+                                            chosenRack = storedRacks[numb];
+                                        }
+                                    }
+
+                                    // Ride robot to position, pickup rack and drop at homenode
+                                    r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(r.currentNode, chosenRack.currentNode).ToArray()));
+                                    r.AddTask(new RobotPickupRack(chosenRack));
+                                    r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(chosenRack.currentNode, this.homeNode).ToArray()));
+                                    r.AddTask(new RobotDropRack());
+
+                                    // Update storage
+                                    int test = storedRacks.IndexOf(chosenRack);
+                                    emptyRacks.Add(chosenRack);
+                                    storedRacks.RemoveAt(test);
+                                }
+                                else if (newRacks.Count > 0)    // Pickup rack, drop in storage and return
+                                {
+                                    for (int count = 0; count < nodeList.Count; count++)
+                                    {
+                                        Console.WriteLine(count + ": " + rackPlacedList[count]);
+                                    }
+
+                                    Node placeRackNode = null;
+                                    for (int count = 0; count < nodeList.Count; count++)    // Get avaible place in storage
+                                    {
+                                        if (rackPlacedList[count] == false)
+                                        {
+                                            placeRackNode = nodeList[count];
+                                            rackPlacedList[count] = true;
+                                            count = nodeList.Count;
+                                        }
+                                    }
+
+                                    // Pickup rack, Ride robot to position and drop rack
+                                    r.AddTask(new RobotPickupRack(newRacks[0]));
+                                    r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(r.currentNode, placeRackNode).ToArray()));
+                                    r.AddTask(new RobotDropRack());
+                                    r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(placeRackNode, this.homeNode).ToArray()));
+
+                                    // Update storage
+                                    storedRacks.Add(newRacks[0]);
+                                    newRacks.RemoveAt(0);
+                                }
+                            }
+                        } else if (worldObjects[i] is Transport)
                         {
-                            Transport t = (Transport)m3d;
+                            Transport t = (Transport)worldObjects[i];
                             t.UpdatePosition();
-                        } else if (m3d is Rack)
+                            
+                            if (t.reachedLoader && !t.createdRacks)
+                            {
+                                foreach (Rack r in emptyRacks)
+                                {
+                                    if (r.currentNode == this.homeNode)
+                                    {
+                                        r.visible = false;
+                                    }
+                                }
+
+                                t.createdRacks = true;
+
+                                int generatedRacks = 0;
+
+                                if (storedRacks.Count <= 30)
+                                {
+                                    generatedRacks = random.Next(3, 5);
+                                } else if (storedRacks.Count > 30 && storedRacks.Count < 40)
+                                {
+                                    generatedRacks = random.Next(1, 5);
+                                } else if (storedRacks.Count >= 40)
+                                {
+                                    generatedRacks = 0;
+                                }
+                                
+                                // Spaw new racks when truck has reached the loader
+                                for (int a = generatedRacks; a > 0; a--)
+                                {
+                                    newRacks.Add(CreateRack(homeNode.x + 1, homeNode.y + 0.15, homeNode.z, homeNode));
+                                }
+                                Console.Write("New racks: " + newRacks.Count);
+                                Console.WriteLine(" Stored racks: " + storedRacks.Count);
+                            }
+                        } else if (worldObjects[i] is Rack)
                         {
 
-                        } else if (m3d is Node)
+                        } else if (worldObjects[i] is Node)
                         {
 
                         }
 
-                        SendCommandToObservers(new UpdateModel3DCommand(m3d));
                         // Send Model through socket
+                        SendCommandToObservers(new UpdateModel3DCommand(worldObjects[i]));
                     }
                 }
             }

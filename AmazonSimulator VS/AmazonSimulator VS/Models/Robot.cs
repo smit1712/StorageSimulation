@@ -2,18 +2,21 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
+using AmazonSimulator;
 
 namespace Models {
     public class Robot : Model3D, IUpdatable
     {
         private List<IRobotTask> tasks = new List<IRobotTask>();
-        public Rack currentRack;
+        public Rack currentRack = null;
+        public Node currentNode;
 
-        public bool hasRack = false;
+        //public bool hasRack = false;
 
-        public Robot(double x, double y, double z, double rotationX, double rotationY, double rotationZ) : base(x,y,z,rotationX,rotationY,rotationZ)
+        public Robot(double x, double y, double z, double rotationX, double rotationY, double rotationZ, Node node) : base(x,y,z,rotationX,rotationY,rotationZ)
         {
             this.type = "robot";
+            this.currentNode = node;
         }
 
         public void AddTask(IRobotTask task)
@@ -40,13 +43,13 @@ namespace Models {
         public void PickupRack(Rack rack)
         {
             currentRack = rack;
-            hasRack = true;
         }
 
         public void DropRack()
         {
+            currentRack.currentNode = currentNode;
+            currentRack.Move(this.x, this.y, this.z - 2);
             currentRack = null;
-            hasRack = false;
         }
     }
 }
