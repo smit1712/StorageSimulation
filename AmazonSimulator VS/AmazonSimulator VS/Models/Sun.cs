@@ -45,7 +45,7 @@ namespace AmazonSimulator
            // double circleZ = x + Math.Sin(Angle) * Radius;
             Move(circleX, circleY, 0);
             needsUpdate = true;
-            Angle += 0.01;
+            Angle += 0.001;
         }
     }
 

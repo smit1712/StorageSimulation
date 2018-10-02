@@ -48,5 +48,6 @@ namespace Models {
             currentRack = null;
             hasRack = false;
         }
+
     }
 }

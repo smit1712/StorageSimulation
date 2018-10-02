@@ -23,7 +23,7 @@ namespace Models {
             CreateTransport(-1.0, 0.4, -10);
 
             CreateRobot(10, 0.15, 10);
-            Sun Sun = new Sun(0, 0, 0, 0, 0, 0, 0.1,500);
+            Sun Sun = new Sun(0, 0, 0, 0, 0, 0, 100,500);
             worldObjects.Add(Sun);
 
 
@@ -56,7 +56,7 @@ namespace Models {
             //route = dijkstra.GetBestRoute(NodeList[0], NodeList[1]);            
             //worldObjects.AddRange(CornerList);
             //worldObjects.AddRange(adjlist);
-            //worldObjects.AddRange(route);
+            //worldObjects.AddRange(NodeList);
 
             // Let Robot loop
             //foreach(Node N in NodeList)

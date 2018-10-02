@@ -58,8 +58,15 @@ namespace AmazonSimulator
                     N.AddAdjacentNode2(Nlist[nodecounter + 1]);
                     
                 }
+                if ((nodecounter +1 == rowsize))
+                {
+                    N.type = "adj";
+                    N.AddAdjacentNode1(Nlist[nodecounter - 1]);
+                    N.AddAdjacentNode2(Nlist[nodecounter + rowsize]);
+                }
                 if ((nodecounter % rowsize) == 0)
                 {
+
                     if ((nodecounter - rowsize) >= 0)
                     {
                         N.AddAdjacentNode1(Nlist[nodecounter - rowsize]);
