@@ -3,7 +3,7 @@ function parseCommand(input = "") {
 }
 
 var Socket;
-
+var plane;
 window.onload = function () {
     var camera, scene, renderer;
     var cameraControls;
@@ -22,31 +22,39 @@ window.onload = function () {
         renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setPixelRatio(window.devicePixelRatio);
         renderer.setSize(window.innerWidth, window.innerHeight + 5);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFShadowMap ; 
         document.body.appendChild(renderer.domElement);
+
+      
 
         window.addEventListener('resize', onWindowResize, false);
 
-        var geometry = new THREE.PlaneGeometry(30, 30, 32);
-        var material = new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide });
-        var plane = new THREE.Mesh(geometry, material);
+        var geometry = new THREE.PlaneGeometry(30, 30, 30);
+        var material = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load("textures/AmazonRoad.png"), side: THREE.DoubleSide });
+        plane = new THREE.Mesh(geometry, material);
         plane.rotation.x = Math.PI / 2.0;
         plane.position.x = 15;
         plane.position.z = 15;
+        plane.position.y = -0.1;
+        plane.lights = true;
+        plane.receiveShadow = true;
         scene.add(plane);
 
+
         var debug = true;
-        if (!debug) {
+        if (debug) {
             var SkyboxGeo = new THREE.SphereGeometry(1000, 32, 32);
-            var SkyboxMat = new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("models/skybox/skybox.jpg"), side: THREE.DoubleSide });
+            var SkyboxMat = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load("models/skybox/skybox.jpg"), side: THREE.DoubleSide });
             var skybox = new THREE.Mesh(SkyboxGeo, SkyboxMat);
             scene.add(skybox);
         }
 
-        var light = new THREE.AmbientLight(0x404040);
-
-        light.intensity = 4;
-        scene.add(light);
     }
+    function roadBuilder() {
+
+    }
+
 
     function onWindowResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -73,28 +81,30 @@ window.onload = function () {
                 var group = new THREE.Group();
 
                 if (command.parameters.type === "robot") {
-                    var geometry = new THREE.BoxGeometry(0.9, 0.3, 0.9);
-                    var cubeMaterials = [
-                        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_side.png"), side: THREE.DoubleSide }), //LEFT
-                        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_side.png"), side: THREE.DoubleSide }), //RIGHT
-                        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_top.png"), side: THREE.DoubleSide }), //TOP
-                        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_bottom.png"), side: THREE.DoubleSide }), //BOTTOM
-                        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_front.png"), side: THREE.DoubleSide }), //FRONT
-                        new THREE.MeshBasicMaterial({ map: new THREE.TextureLoader().load("textures/robot_front.png"), side: THREE.DoubleSide }), //BACK
-                    ];
-                    var material = new THREE.MeshFaceMaterial(cubeMaterials);
-                    var robot = new THREE.Mesh(geometry, material);
-                    robot.position.y = 0.15;
-                    // Add object to group
-                    group.add(robot);
+                    loadOBJModel("models/Drone/", "drone.obj", "models/Drone/", "drone.mtl", (obj) => {
+                        obj.scale.set(5, 5, 5);                        
+                        obj.traverse(function (object) {
+                            object.castShadow = true;
+                            object.receiveShadow = true;
+                        });
+                        group.add(obj);
+                    });
                 } else if (command.parameters.type === "rack") {
                     loadOBJModel("models/rack/", "rack.obj", "models/rack/", "rack.mtl", (obj) => {
                         obj.scale.set(0.03, 0.03, 0.03);
-                        group.add(obj);
+                        obj.traverse(function (object) {
+                            object.castShadow = true;
+                            object.receiveShadow = true;
+                        });             
+                        group.add(obj);                        
                     });
                 } else if (command.parameters.type === "transport") {
                     loadOBJModel("models/transport/", "truck.obj", "models/transport/", "truck.mtl", (obj) => {
                         obj.scale.set(0.03, 0.03, 0.03);
+                        obj.traverse(function (object) {
+                            object.castShadow = true;
+                            object.receiveShadow = true;
+                        });
                         group.add(obj);
                     });
                 } else if (command.parameters.type === "node") {
@@ -107,6 +117,29 @@ window.onload = function () {
                     var adhmaterial = new THREE.MeshBasicMaterial({ color: 0xf44242 });
                     var adjcube = new THREE.Mesh(adjgeometry, adhmaterial);
                     group.add(adjcube);
+                } else if (command.parameters.type === "sun") {
+                    var sungeometry = new THREE.SphereGeometry(100, 100, 100 );
+                    var sunmaterial = new THREE.MeshBasicMaterial({ color: 0xe5f442 });                    
+                    var sunsphere = new THREE.Mesh(sungeometry, sunmaterial);
+                    var sunlight = new THREE.DirectionalLight(0xffffff, 1);
+                    sunlight.position = command.parameters.position;
+                    sunlight.castShadow = true;   
+                    
+                    sunlight.shadow.mapSize.width = 4096;  // default
+                    sunlight.shadow.mapSize.height = 4096; // default
+                    sunlight.shadow.camera.near = 0.5;    // default
+                    sunlight.shadow.camera.far = 1024;     // default
+                    
+                    var helper = new THREE.DirectionalLightHelper(sunlight, 5, 0xe5f442 );
+
+                    sunlight.shadow.camera = new THREE.OrthographicCamera(-100, 100, 100, -100, 0.5, 1000); 
+
+                    scene.add(helper);
+
+                    group.add(sunsphere);
+                    group.add(sunlight);
+                    
+                    
                 }
 
                 // Add group to Scene

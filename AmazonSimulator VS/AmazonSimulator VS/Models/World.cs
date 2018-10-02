@@ -16,6 +16,8 @@ namespace Models {
         // All models
         private List<Model3D> worldObjects = new List<Model3D>();
         // Racks
+        
+        
         private List<Rack> newRacks = new List<Rack>();
         private List<Rack> storedRacks = new List<Rack>();
         private List<Rack> emptyRacks = new List<Rack>();
@@ -32,18 +34,16 @@ namespace Models {
             this.nodeList = nodeCreator.GetNodeList();
             this.homeNode = nodeList[27];
 
-            CreateRobot(10, 0.15, 10, this.homeNode);
-            CreateRobot(10, 0.15, 10, this.homeNode);
-            CreateRobot(10, 0.15, 10, this.homeNode);
-            CreateRobot(10, 0.15, 10, this.homeNode);
-            CreateRobot(10, 0.15, 10, this.homeNode);
-            CreateRobot(10, 0.15, 10, this.homeNode);
-            CreateRobot(10, 0.15, 10, this.homeNode);
-            CreateRobot(10, 0.15, 10, this.homeNode);
-            CreateRobot(10, 0.15, 10, this.homeNode);
-            CreateRobot(10, 0.15, 10, this.homeNode);
-            CreateRobot(10, 0.15, 10, this.homeNode);
-            CreateRobot(10, 0.15, 10, this.homeNode);
+            CreateRobot(10, 0.15, 10);
+            Sun Sun = new Sun(0, 0, 0, 0, 0, 0, 100,500);
+            worldObjects.Add(Sun);
+
+            CreateRobot(1, 0.15, 10, this.homeNode);
+            CreateRobot(1, 0.15, 10, this.homeNode);
+            CreateRobot(1, 0.15, 10, this.homeNode);
+            CreateRobot(1, 0.15, 10, this.homeNode);
+            CreateRobot(1, 0.15, 10, this.homeNode);
+            CreateRobot(1, 0.15, 10, this.homeNode);
 
             // Set list that tracks wether a node 
             for (int i = nodeList.Count; i > 0; i--)
@@ -90,16 +90,7 @@ namespace Models {
 
             //worldObjects.AddRange(CornerList);
             //worldObjects.AddRange(adjlist);
-            //worldObjects.AddRange(route);
-
-            // Let Robot loop
-            //foreach(Node N in NodeList)
-            //{
-            //    Robot testRobot = CreateRobot(1, 0.15, 5);
-            //    route = dijkstra.GetBestRoute(NodeList[0], NodeList[Convert.ToInt32(N.NodeName)]);
-            //    testRobot.AddTask(new RobotMove(route.ToArray()));
-            //}
-
+            //worldObjects.AddRange(NodeList);
         }
 
        
@@ -241,6 +232,9 @@ namespace Models {
                         } else if (worldObjects[i] is Node)
                         {
 
+                        } else if (m3d is Sun)
+                        {
+                            
                         }
 
                         // Send Model through socket

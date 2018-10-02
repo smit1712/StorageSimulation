@@ -51,5 +51,6 @@ namespace Models {
             currentRack.Move(this.x, this.y, this.z - 2);
             currentRack = null;
         }
+
     }
 }
