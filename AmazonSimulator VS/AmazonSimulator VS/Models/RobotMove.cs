@@ -96,7 +96,7 @@ namespace Models
             }
 
             // Move robot to new position
-            r.Move(newX, newY, newZ);
+            r.Hover(newX, newY, newZ);
             if (r.currentRack != null)
             {
                 r.currentRack.Move(newX, newY-2, newZ);
