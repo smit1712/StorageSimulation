@@ -87,8 +87,8 @@ window.onload = function () {
                         group.add(obj);
                     });
                 } else if (command.parameters.type === "rack") {
-                    loadOBJModel("models/rack/", "rack.obj", "models/rack/", "rack.mtl", (obj) => {
-                        obj.scale.set(0.03, 0.03, 0.03);
+                    loadOBJModel("models/rack/", "rack2.obj", "models/rack/", "rack2.mtl", (obj) => {
+                        obj.scale.set(2, 2, 2);
                         obj.traverse(function (object) {
                             object.castShadow = true;
                             object.receiveShadow = true;

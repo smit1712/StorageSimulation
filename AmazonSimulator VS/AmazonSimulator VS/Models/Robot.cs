@@ -48,7 +48,7 @@ namespace Models {
         public void DropRack()
         {
             currentRack.currentNode = currentNode;
-            currentRack.Move(this.x, this.y, this.z - 2);
+            currentRack.Move(this.x, this.y-2, this.z - 2);
             currentRack = null;
         }
 

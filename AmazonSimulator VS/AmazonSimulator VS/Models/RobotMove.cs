@@ -30,7 +30,7 @@ namespace Models
 
         public bool TaskCompleted(Robot r)
         {
-            if (r.x == path[0].x && r.y == path[0].y && r.z == path[0].z)
+            if (r.x == path[0].x && /*r.y == path[0].y &&*/ r.z == path[0].z)
             {
                 path.RemoveAt(0);
             }
@@ -66,19 +66,19 @@ namespace Models
             }
 
             // Adjust y as
-            if (r.y < path[0].y)
-            {
-                newY += .2;
-            }
-            else if (r.y > path[0].y)
-            {
-                newY -= .2;
-            }
+            //if (r.y < path[0].y)
+            //{
+            //    newY += .2;
+            //}
+            //else if (r.y > path[0].y)
+            //{
+            //    newY -= .2;
+            //}
 
-            if (Math.Abs(r.y - path[0].y) < .2)
-            {
-                newY = path[0].y;
-            }
+            //if (Math.Abs(r.y - path[0].y) < .2)
+            //{
+            //    newY = path[0].y;
+            //}
 
             // Adjust z as
             if (r.z < path[0].z)
@@ -99,7 +99,7 @@ namespace Models
             r.Move(newX, newY, newZ);
             if (r.currentRack != null)
             {
-                r.currentRack.Move(newX, newY, newZ);
+                r.currentRack.Move(newX, newY-2, newZ);
             }
         }
     }

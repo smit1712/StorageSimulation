@@ -37,12 +37,12 @@ namespace Models {
             Sun Sun = new Sun(0, 0, 0, 0, 0, 0, 100,500);
             worldObjects.Add(Sun);
 
-            CreateRobot(1, 0.15, 10, this.homeNode);
-            CreateRobot(1, 0.15, 10, this.homeNode);
-            CreateRobot(1, 0.15, 10, this.homeNode);
-            CreateRobot(1, 0.15, 10, this.homeNode);
-            CreateRobot(1, 0.15, 10, this.homeNode);
-            CreateRobot(1, 0.15, 10, this.homeNode);
+            CreateRobot(1, 3.15, 10, this.homeNode);
+            CreateRobot(1, 3.15, 10, this.homeNode);
+            CreateRobot(1, 3.15, 10, this.homeNode);
+            CreateRobot(1, 3.15, 10, this.homeNode);
+            CreateRobot(1, 3.15, 10, this.homeNode);
+            CreateRobot(1, 3.15, 10, this.homeNode);
 
             // Set list that tracks wether a node 
             for (int i = nodeList.Count; i > 0; i--)
