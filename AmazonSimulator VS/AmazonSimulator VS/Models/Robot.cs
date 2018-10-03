@@ -7,7 +7,7 @@ using AmazonSimulator;
 namespace Models {
     public class Robot : Model3D, IUpdatable
     {
-        private List<IRobotTask> tasks = new List<IRobotTask>();
+        public List<IRobotTask> tasks = new List<IRobotTask>();
         public Rack currentRack = null;
         public Node currentNode;
 

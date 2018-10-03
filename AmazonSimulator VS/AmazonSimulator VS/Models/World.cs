@@ -38,12 +38,10 @@ namespace Models {
             Sun Sun = new Sun(0, 0, 0, 0, 0, 0, 100,500);
             worldObjects.Add(Sun);
 
-            CreateRobot(1, 3.15, 10, this.homeNode);
-            CreateRobot(1, 3.15, 10, this.homeNode);
-            CreateRobot(1, 3.15, 10, this.homeNode);
-            CreateRobot(1, 3.15, 10, this.homeNode);
-            CreateRobot(1, 3.15, 10, this.homeNode);
-            CreateRobot(1, 3.15, 10, this.homeNode);
+            for (int i = 10; i >=0; i--)
+            {
+                CreateRobot(1, 3.15, 10, this.homeNode);
+            }
 
             // Set list that tracks wether a node 
             foreach (Node n in nodeList)
@@ -58,16 +56,6 @@ namespace Models {
                     this.rackPlacedList.Add(false);
                 }
             }
-
-            Console.WriteLine(rackPlacedList[10]);
-
-            Console.WriteLine(rackPlacedList[13]);
-
-            Console.WriteLine(rackPlacedList[20]);
-
-            Console.WriteLine(unavailablePlaces.Contains(10));
-            Console.WriteLine(unavailablePlaces.Contains(13));
-            Console.WriteLine(unavailablePlaces.Contains(20));
 
             List<Node> CornerList = new List<Node>();    
             foreach(Node n in nodeList)
@@ -88,24 +76,13 @@ namespace Models {
             }
 
             this.dijkstra = new Dijkstra(nodeList);
-            List<Node> route = new List<Node>();
-
-            // Try out node route
-            //Robot r = CreateRobot(10, 0.15, 10, this.homeNode);
-            //route = this.dijkstra.GetBestRoute(nodeList[5], nodeList[27]);
-            //r.AddTask(new RobotMove(route.ToArray()));
-
-            //this.newRacks.Add(CreateRack(3, 0.15, 12.5, this.homeNode));
-            //CreateRack(10, 0.15, 10);
-            //CreateRack(15, 0.15, 15);
-            //CreateRack(20, 0.15, 20);
 
             //worldObjects.AddRange(CornerList);
             //worldObjects.AddRange(adjlist);
             //worldObjects.AddRange(NodeList);
         }
 
-       
+
         private Robot CreateRobot(double x, double y, double z, Node node) {
             Robot r = new Robot(x, y, z, 0, 0, 0, node);
             worldObjects.Add(r);
@@ -139,42 +116,38 @@ namespace Models {
                         if  (worldObjects[i] is Robot)
                         {
                             Robot r = (Robot)worldObjects[i];
-                            if (r.currentNode == homeNode && r.currentRack == null)
+                            if (r.currentNode == homeNode && r.currentRack == null && r.tasks.Count == 0)
                             {
-                                if (storedRacks.Count > 5) // Search for rack and place it at the home node
+                                if (storedRacks.Count > 20) // Search for rack and place it at the home node
                                 {
-                                    int doOrNot = random.Next(0, 2);
-                                    if (doOrNot == 1)
+                                    int randomRackInt = 0;
+                                    Rack randomRack = null;
+                                    int randomRackNodeName = 0;
+
+                                    bool checkRack = false;
+                                    while (!checkRack)
                                     {
-                                        int randomRackInt = random.Next(storedRacks.Count);
-                                        Rack randomRack = storedRacks[randomRackInt];
-                                        int randomRackNodeName = Convert.ToInt32(randomRack.currentNode.NodeName);
+                                        randomRackInt = random.Next(storedRacks.Count);
+                                        randomRack = storedRacks[randomRackInt];
+                                        randomRackNodeName = Convert.ToInt32(randomRack.currentNode.NodeName);
 
-                                        //if (!unavailablePlaces.Contains(randomRackNodeName)) {
-                                        //    getNewRandomRack = false;
-                                        //    Console.WriteLine("Node nmmr is not a corner (adj)");
-                                        //    Console.WriteLine(randomRackNodeName);
- 
-                                        Console.WriteLine("Random rack NO in List: " + randomRackInt);
-                                        Console.WriteLine("I'm getting a rack from Node: " + randomRackNodeName);
-                                        //Console.WriteLine(rackPlacedList[randomRackNodeName]);
-
-                                        //Console.WriteLine(unavailablePlaces.Contains(randomRackNodeName));
-
-                                        rackPlacedList[randomRackNodeName] = false;
-                                        //Console.WriteLine(rackPlacedList[randomRackNodeName]);
-                                        
-
-                                        // Ride robot to position, pickup rack and drop at homenode
-                                        r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(r.currentNode, randomRack.currentNode).ToArray()));
-                                        r.AddTask(new RobotPickupRack(randomRack));
-                                        r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(randomRack.currentNode, this.homeNode).ToArray()));
-                                        r.AddTask(new RobotDropRack());
-
-                                        randomRack.currentNode.busy = true;
-                                        emptyRacks.Add(randomRack);
-                                        storedRacks.RemoveAt(storedRacks.IndexOf(randomRack));
+                                        if (randomRackNodeName !=  Convert.ToInt32(this.homeNode.NodeName))
+                                        {
+                                            checkRack = true;
+                                        }
                                     }
+
+                                    rackPlacedList[randomRackNodeName] = false;
+
+                                    // Ride robot to position, pickup rack and drop at homenode
+                                    r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(r.currentNode, randomRack.currentNode).ToArray()));
+                                    r.AddTask(new RobotPickupRack(randomRack));
+                                    r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(randomRack.currentNode, this.homeNode).ToArray()));
+                                    r.AddTask(new RobotDropRack());
+
+                                    randomRack.currentNode.busy = true;
+                                    emptyRacks.Add(randomRack);
+                                    storedRacks.RemoveAt(storedRacks.IndexOf(randomRack));
                                 }
                                 else if (newRacks.Count > 0)    // Pickup rack, drop in storage and return
                                 {
@@ -195,12 +168,14 @@ namespace Models {
                                     int f = 0;
                                     foreach (bool b in rackPlacedList)
                                     {
-                                        
-                                        if (b && !this.unavailablePlaces.Contains(f))
+                                        if (f < 10)
                                         {
-                                            Console.WriteLine(f + " : " + b);
+                                            if (b && !this.unavailablePlaces.Contains(f))
+                                            {
+                                                Console.WriteLine(f + " : " + b);
+                                            }
+                                            f++;
                                         }
-                                        f++;
                                     }
                                     Console.WriteLine("Placing a new rack on node: " + placeRackNode.NodeName);
                                     // Pickup rack, Ride robot to position and drop rack
