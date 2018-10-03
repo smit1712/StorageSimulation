@@ -15,6 +15,7 @@ namespace AmazonSimulator
         Node PreviousNode;
 
         private double DistanceFromOrigin;
+        public bool busy = false;
         public string NodeName;
         public Node(double x, double y, double z,string NName) : base(x, y, z, 0, 0, 0) 
         {

@@ -146,35 +146,34 @@ namespace Models {
                                     int doOrNot = random.Next(0, 2);
                                     if (doOrNot == 1)
                                     {
-                                        int randomRack = 0;
-                                        int randomRackNodeName = Convert.ToInt32(storedRacks[randomRack].currentNode.NodeName);
-                                        bool getNewRandomRack = true;
+                                        int randomRackInt = random.Next(storedRacks.Count);
+                                        Rack randomRack = storedRacks[randomRackInt];
+                                        int randomRackNodeName = Convert.ToInt32(randomRack.currentNode.NodeName);
 
-                                        while (getNewRandomRack)
-                                        {
-                                            randomRack = random.Next(storedRacks.Count);
-                                            if (!unavailablePlaces.Contains(randomRackNodeName)) {
-                                                getNewRandomRack = false;
-                                            }
-                                        }
+                                        //if (!unavailablePlaces.Contains(randomRackNodeName)) {
+                                        //    getNewRandomRack = false;
+                                        //    Console.WriteLine("Node nmmr is not a corner (adj)");
+                                        //    Console.WriteLine(randomRackNodeName);
+ 
+                                        Console.WriteLine("Random rack NO in List: " + randomRackInt);
+                                        Console.WriteLine("I'm getting a rack from Node: " + randomRackNodeName);
+                                        //Console.WriteLine(rackPlacedList[randomRackNodeName]);
 
-                                        Console.WriteLine(randomRack);
-                                        Console.WriteLine(rackPlacedList[randomRackNodeName]);
-
-                                        Console.WriteLine(unavailablePlaces.Contains(randomRackNodeName));
+                                        //Console.WriteLine(unavailablePlaces.Contains(randomRackNodeName));
 
                                         rackPlacedList[randomRackNodeName] = false;
-                                        Console.WriteLine(rackPlacedList[randomRackNodeName]);
-                                        Console.WriteLine(randomRackNodeName);
-                                        Thread.Sleep(2500);
+                                        //Console.WriteLine(rackPlacedList[randomRackNodeName]);
+                                        
+
                                         // Ride robot to position, pickup rack and drop at homenode
-                                        r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(r.currentNode, storedRacks[randomRack].currentNode).ToArray()));
-                                        r.AddTask(new RobotPickupRack(storedRacks[randomRack]));
-                                        r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(storedRacks[randomRack].currentNode, this.homeNode).ToArray()));
+                                        r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(r.currentNode, randomRack.currentNode).ToArray()));
+                                        r.AddTask(new RobotPickupRack(randomRack));
+                                        r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(randomRack.currentNode, this.homeNode).ToArray()));
                                         r.AddTask(new RobotDropRack());
 
-                                        emptyRacks.Add(storedRacks[randomRack]);
-                                        storedRacks.RemoveAt(randomRack);
+                                        randomRack.currentNode.busy = true;
+                                        emptyRacks.Add(randomRack);
+                                        storedRacks.RemoveAt(storedRacks.IndexOf(randomRack));
                                     }
                                 }
                                 else if (newRacks.Count > 0)    // Pickup rack, drop in storage and return
@@ -185,11 +184,25 @@ namespace Models {
                                         if (rackPlacedList[count] == false)
                                         {
                                             placeRackNode = nodeList[count];
-                                            rackPlacedList[count] = true;
-                                            count = nodeList.Count;
+                                            if (!placeRackNode.busy)
+                                            {
+                                                rackPlacedList[count] = true;
+                                                count = nodeList.Count;
+                                            }
                                         }
                                     }
 
+                                    int f = 0;
+                                    foreach (bool b in rackPlacedList)
+                                    {
+                                        
+                                        if (b && !this.unavailablePlaces.Contains(f))
+                                        {
+                                            Console.WriteLine(f + " : " + b);
+                                        }
+                                        f++;
+                                    }
+                                    Console.WriteLine("Placing a new rack on node: " + placeRackNode.NodeName);
                                     // Pickup rack, Ride robot to position and drop rack
                                     r.AddTask(new RobotPickupRack(newRacks[0]));
                                     r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(r.currentNode, placeRackNode).ToArray()));

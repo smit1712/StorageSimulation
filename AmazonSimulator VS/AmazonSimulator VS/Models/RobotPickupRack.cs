@@ -22,6 +22,10 @@ namespace Models
             }
 
             r.PickupRack(rack);
+            if (rack.currentNode.busy)
+            {
+                rack.currentNode.busy = false;
+            }
         }
 
         public bool TaskCompleted(Robot r)
