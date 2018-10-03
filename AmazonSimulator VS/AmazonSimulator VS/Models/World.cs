@@ -11,6 +11,7 @@ namespace Models {
         // Nodes en Dijkstra algorithm
         private List<Node> nodeList = new List<Node>();
         private List<bool> rackPlacedList = new List<bool>();
+        private List<int> unavailablePlaces = new List<int>();
         private Node homeNode;
         private Dijkstra dijkstra;
         // All models
@@ -45,16 +46,28 @@ namespace Models {
             CreateRobot(1, 0.15, 10, this.homeNode);
 
             // Set list that tracks wether a node 
-            for (int i = nodeList.Count; i > 0; i--)
+            foreach (Node n in nodeList)
             {
-                if (i != 1 && i % 7 == 1)
+                if (n.type == "adj")
                 {
-                    rackPlacedList.Add(true);
-                } else
+                    this.rackPlacedList.Add(true);
+                    this.unavailablePlaces.Add(Convert.ToInt32(n.NodeName));
+                }
+                else
                 {
-                    rackPlacedList.Add(false);
+                    this.rackPlacedList.Add(false);
                 }
             }
+
+            Console.WriteLine(rackPlacedList[10]);
+
+            Console.WriteLine(rackPlacedList[13]);
+
+            Console.WriteLine(rackPlacedList[20]);
+
+            Console.WriteLine(unavailablePlaces.Contains(10));
+            Console.WriteLine(unavailablePlaces.Contains(13));
+            Console.WriteLine(unavailablePlaces.Contains(20));
 
             List<Node> CornerList = new List<Node>();    
             foreach(Node n in nodeList)
@@ -130,45 +143,42 @@ namespace Models {
                             {
                                 if (storedRacks.Count > 5) // Search for rack and place it at the home node
                                 {
-                                    Rack chosenRack = null;
-                                    bool chooseRack = true;
-
-                                    int numb = 0;
-                                    while (chooseRack)
+                                    int doOrNot = random.Next(0, 2);
+                                    if (doOrNot == 1)
                                     {
-                                        numb = random.Next(0, storedRacks.Count);
-                                        bool getRack = rackPlacedList[numb];
+                                        int randomRack = 0;
+                                        int randomRackNodeName = Convert.ToInt32(storedRacks[randomRack].currentNode.NodeName);
+                                        bool getNewRandomRack = true;
 
-                                        if (getRack)    // Chosen position contains a rack
+                                        while (getNewRandomRack)
                                         {
-                                            chooseRack = false;
-                                            rackPlacedList[numb] = false;
-                                            chosenRack = storedRacks[numb];
+                                            randomRack = random.Next(storedRacks.Count);
+                                            if (!unavailablePlaces.Contains(randomRackNodeName)) {
+                                                getNewRandomRack = false;
+                                            }
                                         }
+
+                                        Console.WriteLine(randomRack);
+                                        Console.WriteLine(rackPlacedList[randomRackNodeName]);
+
+                                        Console.WriteLine(unavailablePlaces.Contains(randomRackNodeName));
+
+                                        rackPlacedList[randomRackNodeName] = false;
+                                        Console.WriteLine(rackPlacedList[randomRackNodeName]);
+                                        Console.WriteLine(randomRackNodeName);
+                                        Thread.Sleep(2500);
+                                        // Ride robot to position, pickup rack and drop at homenode
+                                        r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(r.currentNode, storedRacks[randomRack].currentNode).ToArray()));
+                                        r.AddTask(new RobotPickupRack(storedRacks[randomRack]));
+                                        r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(storedRacks[randomRack].currentNode, this.homeNode).ToArray()));
+                                        r.AddTask(new RobotDropRack());
+
+                                        emptyRacks.Add(storedRacks[randomRack]);
+                                        storedRacks.RemoveAt(randomRack);
                                     }
-
-                                    // Ride robot to position, pickup rack and drop at homenode
-                                    r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(r.currentNode, chosenRack.currentNode).ToArray()));
-                                    r.AddTask(new RobotPickupRack(chosenRack));
-                                    r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(chosenRack.currentNode, this.homeNode).ToArray()));
-                                    r.AddTask(new RobotDropRack());
-
-                                    // Update storage
-
-                                    ///
-                                    /// Hier gaat nog iets mis
-                                    ///
-                                    int test = storedRacks.IndexOf(chosenRack);
-                                    emptyRacks.Add(chosenRack);
-                                    storedRacks.RemoveAt(test);
                                 }
                                 else if (newRacks.Count > 0)    // Pickup rack, drop in storage and return
                                 {
-                                    for (int count = 0; count < nodeList.Count; count++)
-                                    {
-                                        Console.WriteLine(count + ": " + rackPlacedList[count]);
-                                    }
-
                                     Node placeRackNode = null;
                                     for (int count = 0; count < nodeList.Count; count++)    // Get avaible place in storage
                                     {
