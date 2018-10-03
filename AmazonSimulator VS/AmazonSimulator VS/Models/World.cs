@@ -21,13 +21,13 @@ namespace Models {
         private List<Rack> newRacks = new List<Rack>();
         private List<Rack> storedRacks = new List<Rack>();
         private List<Rack> emptyRacks = new List<Rack>();
-        // Used for randomness in spawning/getting racks
+        // Used for randomness in spawning/getting rackss
         private Random random = new Random();
         // Clients
         private List<IObserver<Command>> observers = new List<IObserver<Command>>();
 
         public World() {
-            CreateTransport(-1.0, 0.4, -10);
+            CreateTransport(0,5.0,0);
 
             // Setup all nodes
             NodeCreator nodeCreator = new NodeCreator(30, 30);
@@ -108,7 +108,7 @@ namespace Models {
 
         private Transport CreateTransport(double x, double y, double z)
         {
-            Transport t = new Transport(x, y, z, 0, 0, 0);
+            Transport t = new Transport(x, y, z, 0, 1.5, 0);
             worldObjects.Add(t);
             return t;
         }
