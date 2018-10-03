@@ -4,6 +4,8 @@ function parseCommand(input = "") {
 
 var Socket;
 var plane;
+var debug = true;
+
 window.onload = function () {
     var camera, scene, renderer;
     var cameraControls;
@@ -42,8 +44,7 @@ window.onload = function () {
         scene.add(plane);
 
 
-        var debug = true;
-        if (debug) {
+        if (!debug) {
             var SkyboxGeo = new THREE.SphereGeometry(1000, 32, 32);
             var SkyboxMat = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load("models/skybox/skybox.jpg"), side: THREE.DoubleSide });
             var skybox = new THREE.Mesh(SkyboxGeo, SkyboxMat);
@@ -51,10 +52,6 @@ window.onload = function () {
         }
 
     }
-    function roadBuilder() {
-
-    }
-
 
     function onWindowResize() {
         camera.aspect = window.innerWidth / window.innerHeight;
@@ -90,8 +87,8 @@ window.onload = function () {
                         group.add(obj);
                     });
                 } else if (command.parameters.type === "rack") {
-                    loadOBJModel("models/rack/", "rack.obj", "models/rack/", "rack.mtl", (obj) => {
-                        obj.scale.set(0.03, 0.03, 0.03);
+                    loadOBJModel("models/rack/", "rack2.obj", "models/rack/", "rack2.mtl", (obj) => {
+                        obj.scale.set(2, 2, 2);
                         obj.traverse(function (object) {
                             object.castShadow = true;
                             object.receiveShadow = true;
@@ -99,8 +96,8 @@ window.onload = function () {
                         group.add(obj);                        
                     });
                 } else if (command.parameters.type === "transport") {
-                    loadOBJModel("models/transport/", "truck.obj", "models/transport/", "truck.mtl", (obj) => {
-                        obj.scale.set(0.03, 0.03, 0.03);
+                    loadOBJModel("models/transport/", "xwing2.obj", "models/transport/", "xwing2.mtl", (obj) => {
+                        obj.scale.set(10, 10, 10);
                         obj.traverse(function (object) {
                             object.castShadow = true;
                             object.receiveShadow = true;
@@ -123,18 +120,15 @@ window.onload = function () {
                     var sunsphere = new THREE.Mesh(sungeometry, sunmaterial);
                     var sunlight = new THREE.DirectionalLight(0xffffff, 1);
                     sunlight.position = command.parameters.position;
-                    sunlight.castShadow = true;   
-                    
-                    sunlight.shadow.mapSize.width = 4096;  // default
-                    sunlight.shadow.mapSize.height = 4096; // default
-                    sunlight.shadow.camera.near = 0.5;    // default
-                    sunlight.shadow.camera.far = 1024;     // default
-                    
-                    var helper = new THREE.DirectionalLightHelper(sunlight, 5, 0xe5f442 );
+                    if (!debug) {
+                        sunlight.castShadow = true;
+                        sunlight.shadow.mapSize.width = 4096;
+                        sunlight.shadow.mapSize.height = 4096;
+                        sunlight.shadow.camera.near = 0.5;    
+                        sunlight.shadow.camera.far = 1024;                    
+                        sunlight.shadow.camera = new THREE.OrthographicCamera(-100, 100, 100, -100, 0.5, 1000); 
 
-                    sunlight.shadow.camera = new THREE.OrthographicCamera(-100, 100, 100, -100, 0.5, 1000); 
-
-                    scene.add(helper);
+                    }
 
                     group.add(sunsphere);
                     group.add(sunlight);
