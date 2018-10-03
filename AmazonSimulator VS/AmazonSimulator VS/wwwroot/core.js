@@ -4,7 +4,7 @@ function parseCommand(input = "") {
 
 var Socket;
 var plane;
-var debug = true;
+var debug = false;
 
 window.onload = function () {
     var camera, scene, renderer;
@@ -33,7 +33,7 @@ window.onload = function () {
         window.addEventListener('resize', onWindowResize, false);
 
         var geometry = new THREE.PlaneGeometry(30, 30, 30);
-        var material = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load("textures/AmazonRoad.png"), side: THREE.DoubleSide });
+        var material = new THREE.MeshPhongMaterial({ map: new THREE.TextureLoader().load("textures/AmazonRoad.png"), side: THREE.DoubleSide });
         plane = new THREE.Mesh(geometry, material);
         plane.rotation.x = Math.PI / 2.0;
         plane.position.x = 15;
@@ -76,13 +76,29 @@ window.onload = function () {
 
                 // Init Three Group
                 var group = new THREE.Group();
+                
 
                 if (command.parameters.type === "robot") {
                     loadOBJModel("models/Drone/", "drone.obj", "models/Drone/", "drone.mtl", (obj) => {
-                        obj.scale.set(5, 5, 5);                        
+                        obj.scale.set(5, 5, 5);    
+
+                        var robotlight = new THREE.SpotLight(0xf44242, 0.5 ,4,0.50,0,0); 
+                        robotlight.position = command.parameters.position;
+                        robotlight.position.y += -1.5;                        
+                        robotlight.target.position.set(15, -1000, 15);
+                        robotlight.target.updateMatrixWorld();
+                        robotlight.castShadow = true;
+                        robotlight.shadow.mapSize.width = 4096;
+                        robotlight.shadow.mapSize.height = 4096;
+                        robotlight.shadow.camera.near = 0.5;
+                        robotlight.shadow.camera.far = 1024; 
+                        robotlight.shadow.camera = new THREE.OrthographicCamera(-10, 10, 10, -10, 0.5, 10); 
+
+                        group.add(robotlight);   
+
                         obj.traverse(function (object) {
-                            object.castShadow = true;
-                            object.receiveShadow = true;
+                        object.castShadow = true;
+                        object.receiveShadow = true;
                         });
                         group.add(obj);
                     });
