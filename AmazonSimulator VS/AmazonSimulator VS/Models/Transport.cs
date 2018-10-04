@@ -10,7 +10,6 @@ namespace Models
     {
         public bool reachedLoader = false;
         public bool createdRacks = false;
-        private double speed = 1;
 
         public Transport(double x, double y, double z, double rotationX, double rotationY, double rotationZ) : base(x, y, z, rotationX, rotationY, rotationZ)
         {
@@ -35,11 +34,7 @@ namespace Models
                 needsUpdate = true;
                 return;
             }
-            if (z >= 0 && z < 12.5 )
-            {
-                speed += -1.5;
-            }
-
+            
             if (z >= 12.5 && z < 30 && !countedTick)
             {
                 countTick = 1;
@@ -49,7 +44,7 @@ namespace Models
                 return;
                 // Truck stands still for * amount of ticks
             }
-            else if (z >= 150)
+            else if (z >= 30)
             {
                 if (countedTick)
                 {
@@ -60,16 +55,14 @@ namespace Models
                 }
                 else
                 {
-                    speed = 1;
-                    newZ = -100;
+                    newZ = 0;
                     visible = true;
                     // Reset truck to start position
                 }
             }
             else
             {
-                newZ = z + 0.15 * speed;
-                speed += 0.2;
+                newZ = z + 0.15;
             }
 
             Move(x, y, newZ);
