@@ -54,6 +54,7 @@ namespace Models {
             currentRack.Move(this.x, 0.2, this.z - 2);
             currentRack = null;
         }
+
         public void Hover(double x, double y, double z)
         {
             if (hover > 360)

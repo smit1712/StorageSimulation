@@ -181,6 +181,10 @@ window.onload = function () {
             object.rotation.z = command.parameters.rotationZ;
 
             object.visible = command.parameters.visible;
+
+            if (command.parameters.delete == true) {
+                scene.remove(object);
+            }
         }
 
         function loadOBJModel(modelPath, modelName, texturePath, textureName, onload) {

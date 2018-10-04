@@ -37,7 +37,7 @@ namespace Models {
             int RobotCount = 10;
             for (int i = RobotCount; i >=0; i--)
             {
-                CreateRobot(1, 3.15, 10, this.homeNode);
+                CreateRobot(this.homeNode.x, 3.15, this.homeNode.z, this.homeNode);
             }
             
             // Set list that tracks wether a node 
@@ -94,7 +94,7 @@ namespace Models {
                             Robot r = (Robot)worldObjects[i];
                             if (r.currentNode == homeNode && r.currentRack == null && r.tasks.Count == 0)
                             {
-                                if (storedRacks.Count > 20) // Search for rack and place it at the home node
+                                if (storedRacks.Count >= 23) // Search for rack and place it at the home node
                                 {
                                     int randomRackInt = 0;
                                     Rack randomRack = null;
@@ -141,19 +141,6 @@ namespace Models {
                                         }
                                     }
 
-                                    int f = 0;
-                                    foreach (bool b in rackPlacedList)
-                                    {
-                                        if (f < 10)
-                                        {
-                                            if (b && !this.unavailablePlaces.Contains(f))
-                                            {
-                                                Console.WriteLine(f + " : " + b);
-                                            }
-                                            f++;
-                                        }
-                                    }
-                                    Console.WriteLine("Placing a new rack on node: " + placeRackNode.NodeName);
                                     // Pickup rack, Ride robot to position and drop rack
                                     r.AddTask(new RobotPickupRack(newRacks[0]));
                                     r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(r.currentNode, placeRackNode).ToArray()));
@@ -174,9 +161,10 @@ namespace Models {
                             {
                                 foreach (Rack r in emptyRacks)
                                 {
-                                    if (r.currentNode == this.homeNode)
+                                    if (r.currentNode == this.homeNode && r.delete != true)
                                     {
-                                        r.visible = false;
+                                        r.delete = true;
+                                        r.needsUpdate = true;
                                     }
                                 }
 
