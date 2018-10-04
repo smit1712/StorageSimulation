@@ -16,9 +16,7 @@ namespace Models {
         private Dijkstra dijkstra;
         // All models
         private List<Model3D> worldObjects = new List<Model3D>();
-        // Racks
-        
-        
+        // Racks              
         private List<Rack> newRacks = new List<Rack>();
         private List<Rack> storedRacks = new List<Rack>();
         private List<Rack> emptyRacks = new List<Rack>();
@@ -27,8 +25,7 @@ namespace Models {
         // Clients
         private List<IObserver<Command>> observers = new List<IObserver<Command>>();
 
-        public World() {
-            CreateTransport(0,5.0,0);
+        public World() {         
 
             // Setup all nodes
             NodeCreator nodeCreator = new NodeCreator(30, 30);
@@ -37,12 +34,12 @@ namespace Models {
 
             Sun Sun = new Sun(0, 0, 0, 0, 0, 0, 100,500);
             worldObjects.Add(Sun);
-
-            for (int i = 10; i >=0; i--)
+            int RobotCount = 10;
+            for (int i = RobotCount; i >=0; i--)
             {
                 CreateRobot(1, 3.15, 10, this.homeNode);
             }
-
+            
             // Set list that tracks wether a node 
             foreach (Node n in nodeList)
             {
@@ -55,31 +52,10 @@ namespace Models {
                 {
                     this.rackPlacedList.Add(false);
                 }
-            }
+            }          
 
-            List<Node> CornerList = new List<Node>();    
-            foreach(Node n in nodeList)
-            {
-                if(n.GetAdjacentNode3() != null)
-                {
-                    CornerList.Add(n);
-                }
-            }
-
-            List<Node> adjlist = new List<Node>();
-            foreach (Node n in this.nodeList)
-            {
-                if (n.GetAdjacentNode3() != null)
-                {
-                    adjlist.Add(n.GetAdjacentNode3());
-                }
-            }
-
+            CreateTransport(0, 5.0, -100);
             this.dijkstra = new Dijkstra(nodeList);
-
-            //worldObjects.AddRange(CornerList);
-            //worldObjects.AddRange(adjlist);
-            //worldObjects.AddRange(NodeList);
         }
 
 

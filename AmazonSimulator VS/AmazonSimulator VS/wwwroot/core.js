@@ -13,7 +13,7 @@ window.onload = function () {
     var worldObjects = {};
 
     function init() {
-        camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 1500);
+        camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 1, 15000);
         cameraControls = new THREE.OrbitControls(camera);
         camera.position.z = 0;
         camera.position.y = 20;
@@ -43,6 +43,14 @@ window.onload = function () {
         plane.receiveShadow = true;
         scene.add(plane);
 
+        var secretlight = new THREE.DirectionalLight(0xffffff, 0.1);
+        secretlight.position.x = 15;
+        secretlight.position.y = 20;
+        secretlight.position.z = 15;
+        scene.add(secretlight);
+        var helper = new THREE.DirectionalLightHelper(secretlight, 5);
+
+        scene.add(helper);
 
         if (!debug) {
             var SkyboxGeo = new THREE.SphereGeometry(1000, 32, 32);
@@ -80,25 +88,25 @@ window.onload = function () {
 
                 if (command.parameters.type === "robot") {
                     loadOBJModel("models/Drone/", "drone.obj", "models/Drone/", "drone.mtl", (obj) => {
-                        obj.scale.set(5, 5, 5);    
+                        obj.scale.set(5, 5, 5);
 
-                        var robotlight = new THREE.SpotLight(0xf44242, 0.5 ,4,0.50,0,0); 
+                        var robotlight = new THREE.SpotLight(0xf44242, 0.5, 4, 0.50, 0, 0);
                         robotlight.position = command.parameters.position;
-                        robotlight.position.y += -1.5;                        
+                        robotlight.position.y += -1.5;
                         robotlight.target.position.set(15, -1000, 15);
                         robotlight.target.updateMatrixWorld();
                         robotlight.castShadow = true;
                         robotlight.shadow.mapSize.width = 4096;
                         robotlight.shadow.mapSize.height = 4096;
                         robotlight.shadow.camera.near = 0.5;
-                        robotlight.shadow.camera.far = 1024; 
-                        robotlight.shadow.camera = new THREE.OrthographicCamera(-10, 10, 10, -10, 0.5, 10); 
+                        robotlight.shadow.camera.far = 1024;
+                        robotlight.shadow.camera = new THREE.OrthographicCamera(-10, 10, 10, -10, 0.5, 10);
 
-                        group.add(robotlight);   
+                        group.add(robotlight);
 
                         obj.traverse(function (object) {
-                        object.castShadow = true;
-                        object.receiveShadow = true;
+                            object.castShadow = true;
+                            object.receiveShadow = true;
                         });
                         group.add(obj);
                     });
@@ -108,8 +116,8 @@ window.onload = function () {
                         obj.traverse(function (object) {
                             object.castShadow = true;
                             object.receiveShadow = true;
-                        });             
-                        group.add(obj);                        
+                        });
+                        group.add(obj);
                     });
                 } else if (command.parameters.type === "transport") {
                     loadOBJModel("models/transport/", "xwing2.obj", "models/transport/", "xwing2.mtl", (obj) => {
@@ -121,15 +129,20 @@ window.onload = function () {
                         group.add(obj);
                     });
                 } else if (command.parameters.type === "node") {
-                    var boxgeometry = new THREE.BoxGeometry(0.1, 10.0, 0.1);
-                    var boxmaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-                    var cube = new THREE.Mesh(boxgeometry, boxmaterial);
-                    group.add(cube);
+                    if (debug) {
+                        var boxgeometry = new THREE.BoxGeometry(0.1, 10.0, 0.1);
+                        var boxmaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+                        var cube = new THREE.Mesh(boxgeometry, boxmaterial);
+                        group.add(cube);
+                    }
                 } else if (command.parameters.type === "adj") {
-                    var adjgeometry = new THREE.BoxGeometry(0.1, 10.0, 0.1);
-                    var adhmaterial = new THREE.MeshBasicMaterial({ color: 0xf44242 });
-                    var adjcube = new THREE.Mesh(adjgeometry, adhmaterial);
-                    group.add(adjcube);
+                    if (debug) {
+                        var adjgeometry = new THREE.BoxGeometry(0.1, 10.0, 0.1);
+                        var adhmaterial = new THREE.MeshBasicMaterial({ color: 0xf44242 });
+                        var adjcube = new THREE.Mesh(adjgeometry, adhmaterial);                        
+                        group.add(adjcube);
+                    }
+
                 } else if (command.parameters.type === "sun") {
                     var sungeometry = new THREE.SphereGeometry(100, 100, 100 );
                     var sunmaterial = new THREE.MeshBasicMaterial({ color: 0xe5f442 });                    
