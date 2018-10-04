@@ -29,11 +29,13 @@ namespace Models {
 
             // Setup all nodes
             NodeCreator nodeCreator = new NodeCreator(30, 30);
+            this.dijkstra = new Dijkstra(nodeList);
             this.nodeList = nodeCreator.GetNodeList();
             this.homeNode = nodeList[27];
 
             Sun Sun = new Sun(0, 0, 0, 0, 0, 0, 100,500);
             worldObjects.Add(Sun);
+
             int RobotCount = 10;
             for (int i = RobotCount; i >=0; i--)
             {
@@ -55,7 +57,7 @@ namespace Models {
             }          
 
             CreateTransport(0, 5.0, -100);
-            this.dijkstra = new Dijkstra(nodeList);
+            
         }
 
 
@@ -203,17 +205,7 @@ namespace Models {
                                 Console.Write("New racks: " + newRacks.Count);
                                 Console.WriteLine(" Stored racks: " + storedRacks.Count);
                             }
-                        } else if (worldObjects[i] is Rack)
-                        {
-
-                        } else if (worldObjects[i] is Node)
-                        {
-
-                        }
-                        else if (worldObjects[i] is Sun)
-                        {
-                            
-                        }
+                        } 
 
                         // Send Model through socket
                         SendCommandToObservers(new UpdateModel3DCommand(worldObjects[i]));

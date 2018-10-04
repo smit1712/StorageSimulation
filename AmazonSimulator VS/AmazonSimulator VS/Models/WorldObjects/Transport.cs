@@ -74,10 +74,5 @@ namespace Models
 
             Move(x, y, newZ);
         }
-
-        private void CreateRacks()
-        {
-
-        }
     }
 }
