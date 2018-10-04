@@ -8,11 +8,11 @@ namespace AmazonSimulator
     public class Dijkstra
     {
         private List<Node> NodeList;
-        private List<Node> path1;
-        private List<Node> path2;
-        private List<Node> path3;
-        private List<Node> unvisited;
-        private List<Node> visited;
+        List<Node> path1;
+        List<Node> path2;
+        List<Node> path3;
+        List<Node> unvisited;
+        List<Node> visited;
         public Dijkstra(List<Node> Nodelist)
         {
             NodeList = Nodelist;

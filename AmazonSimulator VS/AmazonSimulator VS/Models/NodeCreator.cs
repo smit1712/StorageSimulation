@@ -9,8 +9,8 @@ namespace AmazonSimulator
     public class NodeCreator
 {
         private double maxX,  maxZ;
-        private List<Node> Nlist = new List<Node>();
-        private int newnodeID = 0;
+        List<Node> Nlist = new List<Node>();
+        int newnodeID = 0;
         public NodeCreator(double MaxX, double MaxZ)
         {
             maxX = MaxX;
