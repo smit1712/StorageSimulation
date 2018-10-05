@@ -19,9 +19,20 @@ class MainScene {
         this.scene.add(plane);
 
         var SkyboxGeo = new THREE.SphereGeometry(1000, 32, 32);
-        var SkyboxMat = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load("models/skybox/skybox.jpg"), side: THREE.DoubleSide });
+        var SkyboxMat = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load("models/skybox/skybox3.jpg"), side: THREE.DoubleSide });
         var skybox = new THREE.Mesh(SkyboxGeo, SkyboxMat);
         this.scene.add(skybox);
+
+        var Nightlight = new THREE.DirectionalLight(0xffffff, 0.2);
+        Nightlight.position.x = 15;
+        Nightlight.position.z = 15;
+        Nightlight.position.y = 15;
+        this.scene.add(Nightlight);
+
+        var helper = new THREE.DirectionalLightHelper(Nightlight, 5);
+
+        this.scene.add(helper);
+
     }
 
     updateScene(command) {
