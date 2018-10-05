@@ -24,6 +24,7 @@ namespace Models
         public double rotationZ { get { return _rZ; } }
 
         public bool visible = true;
+        public bool delete = false;
         public bool needsUpdate = true;
 
         public Model3D(double x, double y, double z, double rotationX, double rotationY, double rotationZ)

@@ -11,10 +11,10 @@ namespace Models
     {
         // Nodes en Dijkstra algorithm
         private List<Node> nodeList = new List<Node>();
-        private List<bool> rackPlacedList = new List<bool>();
-        private List<int> unavailablePlaces = new List<int>();
+        protected List<bool> rackPlacedList = new List<bool>();
+        protected List<int> unavailablePlaces = new List<int>();
         private Node homeNode;
-        private Dijkstra dijkstra;
+        protected Dijkstra dijkstra;
         // All models
         private List<Model3D> worldObjects = new List<Model3D>();
         // Racks              
@@ -36,10 +36,11 @@ namespace Models
 
             Sun Sun = new Sun(0, 0, 0, 0, 0, 0, 100, 500);
             worldObjects.Add(Sun);
+
             int RobotCount = 10;
             for (int i = RobotCount; i >= 0; i--)
             {
-                CreateRobot(1, 3.15, 10, this.homeNode);
+                CreateRobot(this.homeNode.x, 3.15, this.homeNode.z, this.homeNode);
             }
 
             // Set list that tracks wether a node 
@@ -97,7 +98,7 @@ namespace Models
                             Robot r = (Robot)worldObjects[i];
                             if (r.currentNode == homeNode && r.currentRack == null && r.tasks.Count == 0)
                             {
-                                if (storedRacks.Count > 20) // Search for rack and place it at the home node
+                                if (storedRacks.Count >= 23) // Search for rack and place it at the home node
                                 {
                                     int randomRackInt = 0;
                                     Rack randomRack = null;
@@ -144,19 +145,6 @@ namespace Models
                                         }
                                     }
 
-                                    int f = 0;
-                                    foreach (bool b in rackPlacedList)
-                                    {
-                                        if (f < 10)
-                                        {
-                                            if (b && !this.unavailablePlaces.Contains(f))
-                                            {
-                                                Console.WriteLine(f + " : " + b);
-                                            }
-                                            f++;
-                                        }
-                                    }
-                                    Console.WriteLine("Placing a new rack on node: " + placeRackNode.NodeName);
                                     // Pickup rack, Ride robot to position and drop rack
                                     r.AddTask(new RobotPickupRack(newRacks[0]));
                                     r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(r.currentNode, placeRackNode).ToArray()));
@@ -174,45 +162,40 @@ namespace Models
                             Transport t = (Transport)worldObjects[i];
                             t.UpdatePosition();
 
-                            if (t.reachedLoader && !t.createdRacks)
+                            if (t.reachedLoader)
                             {
                                 foreach (Rack r in emptyRacks)
                                 {
-                                    if (r.currentNode == this.homeNode)
+                                    if (r.currentNode == this.homeNode && r.delete != true)
                                     {
-                                        r.visible = false;
+                                        r.delete = true;
+                                        r.needsUpdate = true;
                                     }
                                 }
 
-                                t.createdRacks = true;
+                                if (!t.createdRacks)
+                                {
+                                    t.createdRacks = true;
 
-                                int generatedRacks = 0;
+                                    int generatedRacks = 0;
 
-                                if (storedRacks.Count <= 30)
-                                {
-                                    generatedRacks = random.Next(3, 5);
-                                }
-                                else if (storedRacks.Count > 30 && storedRacks.Count < 40)
-                                {
-                                    generatedRacks = random.Next(1, 5);
-                                }
-                                else if (storedRacks.Count >= 40)
-                                {
-                                    generatedRacks = 0;
-                                }
+                                    if (storedRacks.Count <= 25)
+                                    {
+                                        generatedRacks = random.Next(3, 5);
+                                    } else
+                                    {
+                                        generatedRacks = 0;
+                                    }
 
-                                // Spaw new racks when truck has reached the loader
-                                for (int a = generatedRacks; a > 0; a--)
-                                {
-                                    newRacks.Add(CreateRack(homeNode.x + 1, homeNode.y + 0.15, homeNode.z, homeNode));
+                                    // Spaw new racks when truck has reached the loader
+                                    for (int a = generatedRacks; a > 0; a--)
+                                    {
+                                        newRacks.Add(CreateRack(homeNode.x + 1, homeNode.y + 0.2, homeNode.z, homeNode));
+                                    }
+                                    Console.Write("New racks: " + newRacks.Count);
+                                    Console.WriteLine(" Stored racks: " + storedRacks.Count);
                                 }
-                                Console.Write("New racks: " + newRacks.Count);
-                                Console.WriteLine(" Stored racks: " + storedRacks.Count);
                             }
-                        }
-                        else if (worldObjects[i] is Rack)
-                        {
-
                         }
                         else if (worldObjects[i] is Node)
                         {
@@ -225,6 +208,12 @@ namespace Models
 
                         // Send Model through socket
                         SendCommandToObservers(new UpdateModel3DCommand(worldObjects[i]));
+
+                        // Remove object from worldobjects
+                        if (worldObjects[i].delete == true)
+                        {
+                            worldObjects.RemoveAt(i);
+                        }
                     }
                 }
             }
@@ -263,7 +252,7 @@ namespace Models
     internal class Unsubscriber<Command> : IDisposable
     {
         private List<IObserver<Command>> _observers;
-        private IObserver<Command> _observer;
+        protected IObserver<Command> _observer;
 
         internal Unsubscriber(List<IObserver<Command>> observers, IObserver<Command> observer)
         {

@@ -23,6 +23,7 @@ namespace AmazonSimulator
             originy = y;
             originz = z;
         }
+
         public override bool Update(int tick)
         {
             if (needsUpdate)
@@ -33,6 +34,7 @@ namespace AmazonSimulator
             Circle();
             return false;
         }
+
         private void Circle()
         {
             if (Angle > 360)
