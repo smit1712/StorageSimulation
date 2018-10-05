@@ -29,10 +29,6 @@ class MainScene {
         Nightlight.position.y = 15;
         this.scene.add(Nightlight);
 
-        var helper = new THREE.DirectionalLightHelper(Nightlight, 5);
-
-        this.scene.add(helper);
-
     }
 
     updateScene(command) {
