@@ -11,10 +11,10 @@ namespace Models
     {
         // Nodes en Dijkstra algorithm
         private List<Node> nodeList = new List<Node>();
-        private List<bool> rackPlacedList = new List<bool>();
-        private List<int> unavailablePlaces = new List<int>();
+        protected List<bool> rackPlacedList = new List<bool>();
+        protected List<int> unavailablePlaces = new List<int>();
         private Node homeNode;
-        private Dijkstra dijkstra;
+        protected Dijkstra dijkstra;
         // All models
         private List<Model3D> worldObjects = new List<Model3D>();
         // Racks              
@@ -252,7 +252,7 @@ namespace Models
     internal class Unsubscriber<Command> : IDisposable
     {
         private List<IObserver<Command>> _observers;
-        private IObserver<Command> _observer;
+        protected IObserver<Command> _observer;
 
         internal Unsubscriber(List<IObserver<Command>> observers, IObserver<Command> observer)
         {
