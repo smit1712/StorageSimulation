@@ -6,7 +6,7 @@ using System.Threading;
 
 namespace Models
 {
-	public class Transport : Model3D, IUpdatable
+    public class Transport : Model3D, IUpdatable
     {
         public bool reachedLoader = false;
         public bool createdRacks = false;
@@ -35,7 +35,7 @@ namespace Models
                 needsUpdate = true;
                 return;
             }
-            if (z >= 0 && z < 12.5 )
+            if (z >= 0 && z < 12.5)
             {
                 speed += -1.5;
             }

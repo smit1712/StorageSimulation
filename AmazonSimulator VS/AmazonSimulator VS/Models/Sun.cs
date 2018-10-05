@@ -8,11 +8,11 @@ namespace AmazonSimulator
 {
     public class Sun : Model3D, IUpdatable
     {
-        private double Angle;
-        private double Radius;
-        private double originx;
-        private double originy;
-        private double originz;
+        double Angle;
+        double Radius;
+        double originx;
+        double originy;
+        double originz;
         public Sun(double x, double y, double z, double rotationX, double rotationY, double rotationZ, double angle, double radius) : base(x, y, z, rotationX, rotationY, rotationZ)
         {
             Angle = angle;
@@ -23,6 +23,7 @@ namespace AmazonSimulator
             originy = y;
             originz = z;
         }
+
         public override bool Update(int tick)
         {
             if (needsUpdate)
@@ -33,6 +34,7 @@ namespace AmazonSimulator
             Circle();
             return false;
         }
+
         private void Circle()
         {
             if (Angle > 360)
@@ -41,7 +43,8 @@ namespace AmazonSimulator
             }
 
             double circleX = originx + Math.Sin(Angle) * Radius;
-            double circleY = originy + Math.Cos(Angle) * Radius;           
+            double circleY = originy + Math.Cos(Angle) * Radius;
+           // double circleZ = x + Math.Sin(Angle) * Radius;
             Move(circleX, circleY, 0);
             needsUpdate = true;
             Angle += 0.001;

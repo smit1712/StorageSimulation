@@ -5,7 +5,8 @@ using Controllers;
 using System.Threading;
 using AmazonSimulator;
 
-namespace Models {
+namespace Models
+{
     public class World : IObservable<Command>, IUpdatable
     {
         // Nodes en Dijkstra algorithm
@@ -25,21 +26,23 @@ namespace Models {
         // Clients
         private List<IObserver<Command>> observers = new List<IObserver<Command>>();
 
-        public World() {         
+        public World()
+        {
 
             // Setup all nodes
             NodeCreator nodeCreator = new NodeCreator(30, 30);
             this.nodeList = nodeCreator.GetNodeList();
             this.homeNode = nodeList[27];
 
-            Sun Sun = new Sun(0, 0, 0, 0, 0, 0, 100,500);
+            Sun Sun = new Sun(0, 0, 0, 0, 0, 0, 100, 500);
             worldObjects.Add(Sun);
+
             int RobotCount = 10;
-            for (int i = RobotCount; i >=0; i--)
+            for (int i = RobotCount; i >= 0; i--)
             {
                 CreateRobot(this.homeNode.x, 3.15, this.homeNode.z, this.homeNode);
             }
-            
+
             // Set list that tracks wether a node 
             foreach (Node n in nodeList)
             {
@@ -52,14 +55,15 @@ namespace Models {
                 {
                     this.rackPlacedList.Add(false);
                 }
-            }          
+            }
 
             CreateTransport(0, 5.0, -100);
             this.dijkstra = new Dijkstra(nodeList);
         }
 
 
-        private Robot CreateRobot(double x, double y, double z, Node node) {
+        private Robot CreateRobot(double x, double y, double z, Node node)
+        {
             Robot r = new Robot(x, y, z, 0, 0, 0, node);
             worldObjects.Add(r);
             return r;
@@ -81,15 +85,15 @@ namespace Models {
 
         public bool Update(int tick)
         {
-            for (int i = worldObjects.Count-1; i >= 0; i--)
-            { 
+            for (int i = worldObjects.Count - 1; i >= 0; i--)
+            {
                 if (worldObjects[i] is IUpdatable)
                 {
                     bool needsCommand = ((IUpdatable)worldObjects[i]).Update(tick);
 
                     if (needsCommand)
                     {
-                        if  (worldObjects[i] is Robot)
+                        if (worldObjects[i] is Robot)
                         {
                             Robot r = (Robot)worldObjects[i];
                             if (r.currentNode == homeNode && r.currentRack == null && r.tasks.Count == 0)
@@ -107,7 +111,7 @@ namespace Models {
                                         randomRack = storedRacks[randomRackInt];
                                         randomRackNodeName = Convert.ToInt32(randomRack.currentNode.NodeName);
 
-                                        if (randomRackNodeName !=  Convert.ToInt32(this.homeNode.NodeName))
+                                        if (randomRackNodeName != Convert.ToInt32(this.homeNode.NodeName))
                                         {
                                             checkRack = true;
                                         }
@@ -152,12 +156,13 @@ namespace Models {
                                     newRacks.RemoveAt(0);
                                 }
                             }
-                        } else if (worldObjects[i] is Transport)
+                        }
+                        else if (worldObjects[i] is Transport)
                         {
                             Transport t = (Transport)worldObjects[i];
                             t.UpdatePosition();
-                            
-                            if (t.reachedLoader && !t.createdRacks)
+
+                            if (t.reachedLoader)
                             {
                                 foreach (Rack r in emptyRacks)
                                 {
@@ -168,43 +173,47 @@ namespace Models {
                                     }
                                 }
 
-                                t.createdRacks = true;
+                                if (!t.createdRacks)
+                                {
+                                    t.createdRacks = true;
 
-                                int generatedRacks = 0;
+                                    int generatedRacks = 0;
 
-                                if (storedRacks.Count <= 30)
-                                {
-                                    generatedRacks = random.Next(3, 5);
-                                } else if (storedRacks.Count > 30 && storedRacks.Count < 40)
-                                {
-                                    generatedRacks = random.Next(1, 5);
-                                } else if (storedRacks.Count >= 40)
-                                {
-                                    generatedRacks = 0;
+                                    if (storedRacks.Count <= 25)
+                                    {
+                                        generatedRacks = random.Next(3, 5);
+                                    } else
+                                    {
+                                        generatedRacks = 0;
+                                    }
+
+                                    // Spaw new racks when truck has reached the loader
+                                    for (int a = generatedRacks; a > 0; a--)
+                                    {
+                                        newRacks.Add(CreateRack(homeNode.x + 1, homeNode.y + 0.2, homeNode.z, homeNode));
+                                    }
+                                    Console.Write("New racks: " + newRacks.Count);
+                                    Console.WriteLine(" Stored racks: " + storedRacks.Count);
                                 }
-                                
-                                // Spaw new racks when truck has reached the loader
-                                for (int a = generatedRacks; a > 0; a--)
-                                {
-                                    newRacks.Add(CreateRack(homeNode.x + 1, homeNode.y + 0.15, homeNode.z, homeNode));
-                                }
-                                Console.Write("New racks: " + newRacks.Count);
-                                Console.WriteLine(" Stored racks: " + storedRacks.Count);
                             }
-                        } else if (worldObjects[i] is Rack)
-                        {
-
-                        } else if (worldObjects[i] is Node)
+                        }
+                        else if (worldObjects[i] is Node)
                         {
 
                         }
                         else if (worldObjects[i] is Sun)
                         {
-                            
+
                         }
 
                         // Send Model through socket
                         SendCommandToObservers(new UpdateModel3DCommand(worldObjects[i]));
+
+                        // Remove object from worldobjects
+                        if (worldObjects[i].delete == true)
+                        {
+                            worldObjects.RemoveAt(i);
+                        }
                     }
                 }
             }
@@ -251,7 +260,7 @@ namespace Models {
             this._observer = observer;
         }
 
-        public void Dispose() 
+        public void Dispose()
         {
             if (_observers.Contains(_observer))
                 _observers.Remove(_observer);

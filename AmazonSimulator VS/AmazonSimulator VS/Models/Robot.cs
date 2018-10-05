@@ -4,7 +4,8 @@ using System.Linq;
 using Newtonsoft.Json;
 using AmazonSimulator;
 
-namespace Models {
+namespace Models
+{
     public class Robot : Model3D, IUpdatable
     {
         public List<IRobotTask> tasks = new List<IRobotTask>();
@@ -12,9 +13,8 @@ namespace Models {
         public Node currentNode;
         private double hover = 0;
         private double starty;
-        //public bool hasRack = false;
 
-        public Robot(double x, double y, double z, double rotationX, double rotationY, double rotationZ, Node node) : base(x,y,z,rotationX,rotationY,rotationZ)
+        public Robot(double x, double y, double z, double rotationX, double rotationY, double rotationZ, Node node) : base(x, y, z, rotationX, rotationY, rotationZ)
         {
             this.type = "robot";
             this.currentNode = node;
@@ -33,7 +33,8 @@ namespace Models {
                 if (tasks.First().TaskCompleted(this))
                 {
                     tasks.RemoveAt(0);
-                } else
+                }
+                else
                 {
                     tasks.First().StartTask(this);
                 }
@@ -50,11 +51,10 @@ namespace Models {
         public void DropRack()
         {
             currentRack.currentNode = currentNode;
-           
+
             currentRack.Move(this.x, 0.2, this.z - 2);
             currentRack = null;
         }
-
         public void Hover(double x, double y, double z)
         {
             if (hover > 360)
@@ -66,7 +66,5 @@ namespace Models {
             hover += 0.1;
             Move(x, y, z);
         }
-
-
     }
 }
