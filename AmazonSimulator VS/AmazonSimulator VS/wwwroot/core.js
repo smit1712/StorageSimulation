@@ -45,9 +45,10 @@ window.onload = function () {
 
 
         if (!debug) {
-            var SkyboxGeo = new THREE.SphereGeometry(1000, 32, 32);
-            var SkyboxMat = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load("models/skybox/skybox.jpg"), side: THREE.DoubleSide });
+            var SkyboxGeo = new THREE.SphereGeometry(500, 32, 32);
+            var SkyboxMat = new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load("models/skybox/skybox3.jpg"), side: THREE.DoubleSide });
             var skybox = new THREE.Mesh(SkyboxGeo, SkyboxMat);
+
             scene.add(skybox);
         }
 
@@ -141,8 +142,8 @@ window.onload = function () {
                         sunlight.shadow.mapSize.width = 4096;
                         sunlight.shadow.mapSize.height = 4096;
                         sunlight.shadow.camera.near = 0.5;    
-                        sunlight.shadow.camera.far = 1024;                    
-                        sunlight.shadow.camera = new THREE.OrthographicCamera(-100, 100, 100, -100, 0.5, 1000); 
+                        sunlight.shadow.camera.far = 1500;                    
+                        sunlight.shadow.camera = new THREE.OrthographicCamera(-100, 100, 100, -100, 0.5, 1500); 
 
                     }
 
