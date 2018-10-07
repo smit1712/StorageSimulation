@@ -13,6 +13,18 @@ namespace AmazonSimulator
         double originx;
         double originy;
         double originz;
+
+        /// <summary>
+        /// On init set location of sun
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <param name="rotationX"></param>
+        /// <param name="rotationY"></param>
+        /// <param name="rotationZ"></param>
+        /// <param name="angle"></param>
+        /// <param name="radius"></param>
         public Sun(double x, double y, double z, double rotationX, double rotationY, double rotationZ, double angle, double radius) : base(x, y, z, rotationX, rotationY, rotationZ)
         {
             Angle = angle;
@@ -35,6 +47,9 @@ namespace AmazonSimulator
             return false;
         }
 
+        /// <summary>
+        /// Moves sun move around the world
+        /// </summary>
         private void Circle()
         {
             if (Angle > 360)

@@ -94,10 +94,6 @@ namespace AmazonSimulator
                     
                     N.type = "adj";
                 }
-                //if(N.x == maxX)
-                //{
-                //    N.AddAdjacentNode3(Nlist[nodecounter + rowsize]);
-                //}
 
                 nodecounter++;
             }

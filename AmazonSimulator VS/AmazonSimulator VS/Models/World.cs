@@ -34,16 +34,18 @@ namespace Models
             this.nodeList = nodeCreator.GetNodeList();
             this.homeNode = nodeList[27];
 
+            // Add a Sun
             Sun Sun = new Sun(0, 0, 0, 0, 0, 0, 100, 500);
             worldObjects.Add(Sun);
 
+            // Init some robots to work with
             int RobotCount = 10;
             for (int i = RobotCount; i >= 0; i--)
             {
                 CreateRobot(this.homeNode.x, 3.15, this.homeNode.z, this.homeNode);
             }
 
-            // Set list that tracks wether a node 
+            // Set list that tracks wether a rack can be placed in a node
             foreach (Node n in nodeList)
             {
                 if (n.type == "adj")
@@ -57,11 +59,21 @@ namespace Models
                 }
             }
 
+            // Init a transport to deliver and get racks
             CreateTransport(0, 5.0, -100);
+
+            // Setup dijkstra method to calculate routes
             this.dijkstra = new Dijkstra(nodeList);
         }
 
-
+        /// <summary>
+        /// Adds new Robot object to worldobjects
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <param name="node"></param>
+        /// <returns>Robot</returns>
         private Robot CreateRobot(double x, double y, double z, Node node)
         {
             Robot r = new Robot(x, y, z, 0, 0, 0, node);
@@ -69,6 +81,14 @@ namespace Models
             return r;
         }
 
+        /// <summary>
+        /// Adds new Rack object to worldobjects
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <param name="node"></param>
+        /// <returns>Rack</returns>
         private Rack CreateRack(double x, double y, double z, Node node)
         {
             Rack r = new Rack(x, y, z, 0, 0, 0, node);
@@ -76,6 +96,13 @@ namespace Models
             return r;
         }
 
+        /// <summary>
+        /// Adds new Transport object to worldobjects
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <returns>Transport</returns>
         private Transport CreateTransport(double x, double y, double z)
         {
             Transport t = new Transport(x, y, z, 0, 1.5, 0);
@@ -96,15 +123,18 @@ namespace Models
                         if (worldObjects[i] is Robot)
                         {
                             Robot r = (Robot)worldObjects[i];
+
+                            // Gives Robot new tasks if possible and needed
                             if (r.currentNode == homeNode && r.currentRack == null && r.tasks.Count == 0)
                             {
-                                if (storedRacks.Count >= 23) // Search for rack and place it at the home node
+                                if (storedRacks.Count >= 25) // Search for rack and place it at the home node
                                 {
                                     int randomRackInt = 0;
                                     Rack randomRack = null;
                                     int randomRackNodeName = 0;
 
                                     bool checkRack = false;
+                                    // Select a random rack
                                     while (!checkRack)
                                     {
                                         randomRackInt = random.Next(storedRacks.Count);
@@ -145,15 +175,18 @@ namespace Models
                                         }
                                     }
 
-                                    // Pickup rack, Ride robot to position and drop rack
-                                    r.AddTask(new RobotPickupRack(newRacks[0]));
-                                    r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(r.currentNode, placeRackNode).ToArray()));
-                                    r.AddTask(new RobotDropRack());
-                                    r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(placeRackNode, this.homeNode).ToArray()));
+                                    if (placeRackNode != null)
+                                    {
+                                        // Pickup rack, Ride robot to position and drop rack
+                                        r.AddTask(new RobotPickupRack(newRacks[0]));
+                                        r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(r.currentNode, placeRackNode).ToArray()));
+                                        r.AddTask(new RobotDropRack());
+                                        r.AddTask(new RobotMove(this.dijkstra.GetBestRoute(placeRackNode, this.homeNode).ToArray()));
 
-                                    // Update storage
-                                    storedRacks.Add(newRacks[0]);
-                                    newRacks.RemoveAt(0);
+                                        // Update storage
+                                        storedRacks.Add(newRacks[0]);
+                                        newRacks.RemoveAt(0);
+                                    }
                                 }
                             }
                         }
@@ -162,8 +195,10 @@ namespace Models
                             Transport t = (Transport)worldObjects[i];
                             t.UpdatePosition();
 
+                            // Transport reached loader
                             if (t.reachedLoader)
                             {
+                                // Clear all empty racks
                                 foreach (Rack r in emptyRacks)
                                 {
                                     if (r.currentNode == this.homeNode && r.delete != true)
@@ -178,7 +213,7 @@ namespace Models
                                     t.createdRacks = true;
 
                                     int generatedRacks = 0;
-
+                                    // Generates random count of racks to be placed in storage
                                     if (storedRacks.Count <= 25)
                                     {
                                         generatedRacks = random.Next(3, 5);
@@ -192,18 +227,10 @@ namespace Models
                                     {
                                         newRacks.Add(CreateRack(homeNode.x + 1, homeNode.y + 0.2, homeNode.z, homeNode));
                                     }
-                                    Console.Write("New racks: " + newRacks.Count);
-                                    Console.WriteLine(" Stored racks: " + storedRacks.Count);
+                                    Console.Write("Stored racks: " + storedRacks.Count);
+                                    Console.WriteLine(" New racks: " + newRacks.Count);
                                 }
                             }
-                        }
-                        else if (worldObjects[i] is Node)
-                        {
-
-                        }
-                        else if (worldObjects[i] is Sun)
-                        {
-
                         }
 
                         // Send Model through socket

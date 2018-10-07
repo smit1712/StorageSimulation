@@ -14,6 +14,7 @@ namespace Models
             this.rack = r;
         }
 
+        // See IRobotTask for summary
         public void StartTask(Robot r)
         {
             if (TaskCompleted(r))
@@ -28,6 +29,7 @@ namespace Models
             }
         }
 
+        // See IRobotTask for summary
         public bool TaskCompleted(Robot r)
         {
             if (r.currentRack == rack)

@@ -20,6 +20,9 @@ namespace Models
         bool countedTick = false;
         int countTick = 0;
         double newZ = 0;
+        /// <summary>
+        /// Moves transport to loader and further
+        /// </summary>
         public void UpdatePosition()
         {
             if (countTick > 0)
@@ -73,11 +76,6 @@ namespace Models
             }
 
             Move(x, y, newZ);
-        }
-
-        private void CreateRacks()
-        {
-
         }
     }
 }

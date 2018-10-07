@@ -8,11 +8,7 @@ namespace Models
 {
     public class RobotDropRack : IRobotTask
     {
-        public RobotDropRack()
-        {
-            
-        }
-
+        // See IRobotTask for summary
         public void StartTask(Robot r)
         {
             if (TaskCompleted(r))
@@ -23,6 +19,7 @@ namespace Models
             r.DropRack();
         }
 
+        // See IRobotTask for summary
         public bool TaskCompleted(Robot r)
         {
             if (r.currentRack == null)

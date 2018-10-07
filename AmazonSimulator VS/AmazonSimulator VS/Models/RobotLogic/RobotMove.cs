@@ -17,6 +17,7 @@ namespace Models
             }
         }
 
+        // See IRobotTask for summary
         public void StartTask(Robot r)
         {
             if (TaskCompleted(r))
@@ -28,6 +29,7 @@ namespace Models
             MoveOverPath(r);
         }
 
+        // See IRobotTask for summary
         public bool TaskCompleted(Robot r)
         {
             if (r.x == path[0].x && /*r.y == path[0].y &&*/ r.z == path[0].z)
@@ -44,6 +46,10 @@ namespace Models
         }
 
         double newX, newY, newZ = 0;
+        /// <summary>
+        /// Moves robot towards new location
+        /// </summary>
+        /// <param name="r"></param>
         public void MoveOverPath(Robot r)
         {
             newX = r.x;
@@ -64,21 +70,6 @@ namespace Models
             {
                 newX = path[0].x;
             }
-
-            // Adjust y as
-            //if (r.y < path[0].y)
-            //{
-            //    newY += .2;
-            //}
-            //else if (r.y > path[0].y)
-            //{
-            //    newY -= .2;
-            //}
-
-            //if (Math.Abs(r.y - path[0].y) < .2)
-            //{
-            //    newY = path[0].y;
-            //}
 
             // Adjust z as
             if (r.z < path[0].z)

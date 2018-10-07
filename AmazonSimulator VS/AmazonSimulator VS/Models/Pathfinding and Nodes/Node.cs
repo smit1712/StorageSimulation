@@ -25,6 +25,8 @@ namespace AmazonSimulator
             NodeName = NName;
 
         }
+
+        // All getters and setters of node
         public double Getx()
         {
             return x;
@@ -123,7 +125,5 @@ namespace AmazonSimulator
         {
             return PreviousNode;
         }
-
-
     }
 }

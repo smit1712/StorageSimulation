@@ -21,11 +21,20 @@ namespace Models
             starty = y;
         }
 
+        /// <summary>
+        /// Adds a new IRobotTask to tasks
+        /// </summary>
+        /// <param name="task"></param>
         public void AddTask(IRobotTask task)
         {
             tasks.Add(task);
         }
 
+        /// <summary>
+        /// Whenever tasks > 0, execute first task
+        /// </summary>
+        /// <param name="tick"></param>
+        /// <returns></returns>
         public override bool Update(int tick)
         {
             if (tasks.Count > 0)
@@ -42,12 +51,19 @@ namespace Models
 
             return true;
         }
-
+        
+        /// <summary>
+        /// Set rack to robot
+        /// </summary>
+        /// <param name="rack"></param>
         public void PickupRack(Rack rack)
         {
             currentRack = rack;
         }
 
+        /// <summary>
+        /// DIsarm rack from robot
+        /// </summary>
         public void DropRack()
         {
             currentRack.currentNode = currentNode;
@@ -55,6 +71,13 @@ namespace Models
             currentRack.Move(this.x, 0.2, this.z - 2);
             currentRack = null;
         }
+
+        /// <summary>
+        /// Adds smooth hover to robot movement
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         public void Hover(double x, double y, double z)
         {
             if (hover > 360)
