@@ -58,7 +58,11 @@ class MainScene {
 
     setupModel(model) {
         // Init Three Group
-        var group = new THREE.Group();
+        var RBgroup = new THREE.Group();
+        var RKgroup = new THREE.Group();
+        var TRgroup = new THREE.Group();
+        var NDgroup = new THREE.Group();
+        var Othergroup = new THREE.Group();
 
         if (model.parameters.type === "robot") {
             this.loadOBJModel("models/Drone/", "drone.obj", "models/Drone/", "drone.mtl", (obj) => {
@@ -76,13 +80,13 @@ class MainScene {
                 robotlight.shadow.camera.far = 1024;
                 robotlight.shadow.camera = new THREE.OrthographicCamera(-10, 10, 10, -10, 0.5, 10);
 
-                group.add(robotlight);
+                RBgroup.add(robotlight);
 
                 obj.traverse(function (object) {
                     object.castShadow = true;
                     object.receiveShadow = true;
                 });
-                group.add(obj);
+                RBgroup.add(obj);
             });
         } else if (model.parameters.type === "rack") {
             this.loadOBJModel("models/rack/", "rack2.obj", "models/rack/", "rack2.mtl", (obj) => {
@@ -91,7 +95,7 @@ class MainScene {
                     object.castShadow = true;
                     object.receiveShadow = true;
                 });
-                group.add(obj);
+                RKgroup.add(obj);
             });
         } else if (model.parameters.type === "transport") {
             this.loadOBJModel("models/transport/", "xwing2.obj", "models/transport/", "xwing2.mtl", (obj) => {
@@ -100,24 +104,23 @@ class MainScene {
                     object.castShadow = true;
                     object.receiveShadow = true;
                 });
-                group.add(obj);
+                TRgroup.add(obj);
             });
         } else if (model.parameters.type === "node") {
             var boxgeometry = new THREE.BoxGeometry(0.1, 10.0, 0.1);
             var boxmaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
             var cube = new THREE.Mesh(boxgeometry, boxmaterial);
-            group.add(cube);
+            NDgroup.add(cube);
         } else if (model.parameters.type === "adj") {
             var adjgeometry = new THREE.BoxGeometry(0.1, 10.0, 0.1);
             var adhmaterial = new THREE.MeshBasicMaterial({ color: 0xf44242 });
             var adjcube = new THREE.Mesh(adjgeometry, adhmaterial);
-            group.add(adjcube);
+            NDgroup.add(adjcube);
         } else if (model.parameters.type === "sun") {
             var sungeometry = new THREE.SphereGeometry(100, 100, 100);
             var sunmaterial = new THREE.MeshBasicMaterial({ color: 0xe5f442 });
             var sunsphere = new THREE.Mesh(sungeometry, sunmaterial);
-            var sunlight = new THREE.DirectionalLight(0xffffff, 1);
-            //sunlight.position = command.parameters.position;
+            var sunlight = new THREE.DirectionalLight(0xffffff, 1);            
             sunlight.castShadow = true;
             sunlight.shadow.mapSize.width = 4096;
             sunlight.shadow.mapSize.height = 4096;
@@ -125,12 +128,16 @@ class MainScene {
             sunlight.shadow.camera.far = 1024;
             sunlight.shadow.camera = new THREE.OrthographicCamera(-100, 100, 100, -100, 0.5, 1000);
 
-            group.add(sunsphere);
-            group.add(sunlight);
+            Othergroup.add(sunsphere);
+            Othergroup.add(sunlight);
         }
 
         // Add group to Scene
-        this.scene.add(group);
+        this.scene.add(RBgroup);
+        this.scene.add(RKgroup);
+        this.scene.add(TRgroup);
+        this.scene.add(NDgroup);
+        this.scene.add(Othergroup);
         this.worldObjects[model.parameters.guid] = group;
     }
 
