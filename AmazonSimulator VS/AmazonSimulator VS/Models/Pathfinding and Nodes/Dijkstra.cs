@@ -56,6 +56,7 @@ namespace AmazonSimulator
                 return path3;
             }
         }
+
         /// <summary>
         /// Shortest path calculated from currentnode to destination. uses recursion to calculate from node to node
         /// </summary>

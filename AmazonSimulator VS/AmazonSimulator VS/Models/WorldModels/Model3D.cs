@@ -24,8 +24,18 @@ namespace Models
         public double rotationZ { get { return _rZ; } }
 
         public bool visible = true;
+        public bool delete = false;
         public bool needsUpdate = true;
 
+        /// <summary>
+        /// On init set location of model and give new unique id
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
+        /// <param name="rotationX"></param>
+        /// <param name="rotationY"></param>
+        /// <param name="rotationZ"></param>
         public Model3D(double x, double y, double z, double rotationX, double rotationY, double rotationZ)
         {
             this._x = x;
@@ -49,6 +59,12 @@ namespace Models
             return false;
         }
 
+        /// <summary>
+        /// Change position of model
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <param name="z"></param>
         public void Move(double x, double y, double z)
         {
             this._x = x;
@@ -58,6 +74,12 @@ namespace Models
             needsUpdate = true;
         }
 
+        /// <summary>
+        /// Rotate model
+        /// </summary>
+        /// <param name="rotationX"></param>
+        /// <param name="rotationY"></param>
+        /// <param name="rotationZ"></param>
         public virtual void Rotate(double rotationX, double rotationY, double rotationZ)
         {
             this._rX = rotationX;

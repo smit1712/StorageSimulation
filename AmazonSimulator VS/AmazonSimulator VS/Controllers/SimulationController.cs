@@ -40,6 +40,8 @@ namespace Controllers {
             }
         }
 
+
+        // Starts simulation
         public void Simulate() {
             running = true;
 

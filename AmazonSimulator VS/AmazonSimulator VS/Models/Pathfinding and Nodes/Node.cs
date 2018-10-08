@@ -15,6 +15,7 @@ namespace AmazonSimulator
         Node PreviousNode;
 
         private double DistanceFromOrigin;
+        public bool busy = false;
         public string NodeName;
         public Node(double x, double y, double z,string NName) : base(x, y, z, 0, 0, 0) 
         {
@@ -24,6 +25,8 @@ namespace AmazonSimulator
             NodeName = NName;
 
         }
+
+        // All getters and setters of node
         public double Getx()
         {
             return x;
@@ -122,7 +125,5 @@ namespace AmazonSimulator
         {
             return PreviousNode;
         }
-
-
     }
 }

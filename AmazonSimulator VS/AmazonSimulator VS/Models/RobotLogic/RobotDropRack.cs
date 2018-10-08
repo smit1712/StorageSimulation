@@ -6,14 +6,9 @@ using System.Threading.Tasks;
 
 namespace Models
 {
-    public class RobotPickupRack : IRobotTask
+    public class RobotDropRack : IRobotTask
     {
-        private Rack rack;
-        public RobotPickupRack(Rack r)
-        {
-            this.rack = r;
-        }
-
+        // See IRobotTask for summary
         public void StartTask(Robot r)
         {
             if (TaskCompleted(r))
@@ -21,12 +16,13 @@ namespace Models
                 return;
             }
 
-            r.PickupRack(rack);
+            r.DropRack();
         }
 
+        // See IRobotTask for summary
         public bool TaskCompleted(Robot r)
         {
-            if (r.currentRack == rack)
+            if (r.currentRack == null)
             {
                 return true;
             }
